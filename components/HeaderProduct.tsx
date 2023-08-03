@@ -11,6 +11,7 @@ export default function HeaderProduct(props: HeaderProductProps) {
       style={{
         backgroundImage: `url(${ShopBack.src})`,
         backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
       }}
     >
       <h3 className="tw-text-3xl tw-font-semibold">{props.title}</h3>
