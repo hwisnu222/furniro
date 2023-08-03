@@ -45,7 +45,10 @@ export default function Index() {
       >
         <div className="tw-grid tw-grid-cols-1 tw-gap-12 md:tw-grid-cols-3">
           {Array.from({ length: 3 }).map((_, index) => (
-            <div key={`browser-${index}`} className="tw-w-full">
+            <div
+              key={`browser-${index}`}
+              className="tw-w-full tw-cursor-pointer"
+            >
               <Image
                 src={FurnitureImage}
                 alt="thumbnail"
