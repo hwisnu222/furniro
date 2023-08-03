@@ -86,7 +86,12 @@ export default function Header() {
           </li>
         </ul> */}
         <Stack gap={2} direction="row">
-          <Button variant="contained" className="tw-bg-default-200">
+          <Button
+            variant="contained"
+            className="tw-bg-default-200"
+            component={Link}
+            href="/auth/login"
+          >
             Login
           </Button>
           <Button variant="outlined">Register</Button>
