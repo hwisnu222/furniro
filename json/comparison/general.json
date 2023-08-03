@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Sales Package",
+    "product1": "1 sectional sofa",
+    "product2": "1 Three Seater, 2 Single Seater"
+  },
+  {
+    "name": "Model Number",
+    "product1": "TFCBLIGRBL6SRHS",
+    "product2": "DTUBLIGRBL568"
+  },
+  {
+    "name": "Secondary Material",
+    "product1": "Solid Wood",
+    "product2": "Solid Wood"
+  },
+  {
+    "name": "Configuration",
+    "product1": "L-shaped",
+    "product2": "L-shaped"
+  },
+  {
+    "name": "Upholstery Material",
+    "product1": "Fabric + Cotton",
+    "product2": "Fabric + Cotton"
+  }
+]
