@@ -1,4 +1,4 @@
-import FurnitureImg from "../assets/images/furniture.png";
+import FurnitureImg from "../assets/images/product.svg";
 
 export default function products() {
   return [
