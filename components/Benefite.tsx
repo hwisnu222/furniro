@@ -6,6 +6,7 @@ import {
   LocalShippingOutlined,
   SupportAgentOutlined,
 } from "@mui/icons-material";
+import Container from "./layouts/Container";
 
 const benefites = [
   {
@@ -32,21 +33,23 @@ const benefites = [
 
 export default function Benefite() {
   return (
-    <Box className="tw-grid tw-grid-cols-2 tw-gap-4 tw-bg-default-100 tw-px-8 tw-py-16 md:tw-grid-cols-4 md:tw-gap-0">
-      {benefites.map((benefite, index) => (
-        <Stack
-          className="tw-flex-col tw-items-center tw-gap-2 md:tw-flex-row"
-          key={`benefite-${index}`}
-        >
-          {benefite.icon}
-          <div className="tw-text-center md:tw-text-left">
-            <h3 className="tw-font-semibold">{benefite.title}</h3>
-            <p className="tw-text-sm tw-font-semibold tw-text-gray-400">
-              {benefite.description}
-            </p>
-          </div>
-        </Stack>
-      ))}
-    </Box>
+    <Container>
+      <Box className="tw-grid tw-grid-cols-2 tw-gap-4 tw-bg-default-100 tw-px-8 tw-py-16 md:tw-grid-cols-4 md:tw-gap-0">
+        {benefites.map((benefite, index) => (
+          <Stack
+            className="tw-flex-col tw-items-center tw-gap-2 md:tw-flex-row"
+            key={`benefite-${index}`}
+          >
+            {benefite.icon}
+            <div className="tw-text-center md:tw-text-left">
+              <h3 className="tw-font-semibold">{benefite.title}</h3>
+              <p className="tw-text-sm tw-font-semibold tw-text-gray-400">
+                {benefite.description}
+              </p>
+            </div>
+          </Stack>
+        ))}
+      </Box>
+    </Container>
   );
 }
