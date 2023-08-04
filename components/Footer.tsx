@@ -17,16 +17,24 @@ export default function Footer() {
           <h4 className="tw-mb-8 tw-font-bold tw-text-gray-300">Links</h4>
           <ul className="tw-flex tw-flex-col tw-gap-8 tw-font-bold">
             <li>
-              <Link href="/">Home</Link>
+              <Link href="/" className="hover:tw-text-gray-600">
+                Home
+              </Link>
             </li>
             <li>
-              <Link href="/shop">Shop</Link>
+              <Link href="/shop" className="hover:tw-text-gray-600">
+                Shop
+              </Link>
             </li>
             <li>
-              <Link href="/about">About</Link>
+              <Link href="/about" className="hover:tw-text-gray-600">
+                About
+              </Link>
             </li>
             <li>
-              <Link href="/contact">Contact</Link>
+              <Link href="/contact" className="hover:tw-text-gray-600">
+                Contact
+              </Link>
             </li>
           </ul>
         </div>
