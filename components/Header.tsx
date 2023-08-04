@@ -91,10 +91,18 @@ export default function Header() {
             className="tw-bg-default-200"
             component={Link}
             href="/auth/login"
+            target="_blank"
           >
             Login
           </Button>
-          <Button variant="outlined">Register</Button>
+          <Button
+            variant="outlined"
+            component={Link}
+            href="/auth/register"
+            target="_blank"
+          >
+            Register
+          </Button>
         </Stack>
       </div>
 
