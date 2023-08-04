@@ -48,7 +48,7 @@ export default function Header() {
 
   return (
     <>
-      <div className="tw-sticky tw-top-0 tw-hidden tw-items-center tw-justify-around tw-p-4 md:tw-flex">
+      <div className="tw-sticky tw-top-0 tw-z-30 tw-hidden tw-items-center tw-justify-around tw-bg-white tw-p-4 md:tw-flex">
         <h3>
           <Image src={Logo} width={152} alt="log-furniro" />
         </h3>
@@ -173,7 +173,7 @@ export default function Header() {
 
       {/* Mobile */}
 
-      <div className="tw-flex tw-items-center tw-justify-between tw-p-4 md:tw-hidden">
+      <div className="tw-sticky tw-top-0 tw-z-30 tw-flex tw-items-center tw-justify-between tw-bg-white tw-p-4 md:tw-hidden">
         <span></span>
         <Image src={Logo} width={152} alt="log-furniro" />
         <Menu onClick={handleMenuMobile} className="tw-cursor-pointer" />
