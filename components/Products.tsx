@@ -13,7 +13,7 @@ export default function Products({ data }: ProductProps) {
       {data?.map((item: ItemProduct, index: number) => (
         <section
           key={`product-${index}`}
-          className="tw-relative tw-gap-4 tw-bg-gray-200 tw-text-left"
+          className="tw-relative tw-gap-4 tw-rounded-md tw-bg-gray-200 tw-text-left"
         >
           <div className="tw-absolute tw-left-0 tw-top-0 tw-z-20 tw-flex tw-h-full tw-w-full tw-flex-col tw-items-center tw-justify-center tw-bg-[#00000080] tw-opacity-0 tw-duration-300 hover:tw-h-full hover:tw-opacity-100">
             <Button
