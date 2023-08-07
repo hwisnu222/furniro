@@ -57,7 +57,14 @@ export default function Products({ data }: ProductProps) {
           <div className="tw-flex tw-flex-col tw-gap-2 tw-p-4">
             <h3 className="tw-text-xl tw-font-bold">{item.title}</h3>
             <p className="tw-text-gray-500">{item.category}</p>
-            <strong>{convertCurrency(item.price)}</strong>
+            <div className="tw-flex tw-flex-col tw-items-start tw-justify-between tw-gap-2 md:tw-flex-row md:tw-items-center">
+              <s className="tw-inline tw-text-sm tw-text-gray-400">
+                {convertCurrency(item.price)}
+              </s>
+              <strong className="tw-inline tw-text-default-200">
+                {convertCurrency(item.price - 2488)}
+              </strong>
+            </div>
           </div>
         </section>
       ))}
