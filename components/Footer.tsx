@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, Divider, Button } from "@mui/material";
+import { Input, Divider, Box } from "@mui/material";
 import Container from "./layouts/Container";
 import Link from "next/link";
 
@@ -50,10 +50,12 @@ export default function Footer() {
           <h4 className="tw-mb-8 tw-font-bold tw-text-gray-300">Newsletter</h4>
           <div className="tw-flex tw-flex-col md:tw-flex-row">
             <Input
-              className="tw-text-gray-400"
+              className="tw-mr-2 tw-text-gray-400"
               placeholder="Enter Your Email Address"
             />
-            <Button>Subscribe</Button>
+            <Box className="tw-cursor-pointer tw-border-b-2 tw-border-black tw-py-4  tw-font-bold tw-uppercase tw-text-black hover:tw-text-gray-800">
+              Subscribe
+            </Box>
           </div>
         </div>
       </div>
