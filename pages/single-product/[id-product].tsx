@@ -224,8 +224,6 @@ export default function SingleProduct() {
         <Tabs
           value={tab}
           onChange={handleChangeTab}
-          textColor="secondary"
-          indicatorColor="secondary"
           aria-label="secondary tabs example"
           className="tw-mb-4"
           variant="scrollable"
