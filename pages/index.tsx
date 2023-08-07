@@ -1,3 +1,4 @@
+import React from "react";
 import Header from "@/components/Header";
 import { Button } from "@mui/material";
 import Image from "next/image";
@@ -51,6 +52,11 @@ const settings = {
 };
 
 export default function Index() {
+  const [more, setMore] = React.useState(false);
+
+  const handleMoreProduct = () => {
+    setMore((prev: boolean) => !prev);
+  };
   return (
     <>
       <Header />
@@ -104,7 +110,7 @@ export default function Index() {
 
       <ProductLayout title="Our Products">
         <div className="tw-mb-8 tw-grid tw-grid-cols-2 tw-gap-4 md:tw-grid-cols-4">
-          {Array.from({ length: 8 }).map((item, index) => (
+          {Array.from({ length: more ? 16 : 8 }).map((item, index) => (
             <section
               key={`product-${index}`}
               className="tw-gap-4 tw-bg-gray-200 tw-text-left"
@@ -123,9 +129,10 @@ export default function Index() {
             </section>
           ))}
         </div>
-        <Button variant="outlined">Show More</Button>
+        <Button variant="outlined" onClick={handleMoreProduct}>
+          Show {more ? "Less" : "More"}
+        </Button>
       </ProductLayout>
-
       <div className="tw-container tw-mx-auto tw-grid tw-grid-cols-1 tw-items-center tw-gap-4 tw-px-10 md:tw-grid-cols-2">
         <div>
           <h3 className="tw-text-2xl tw-font-bold">
