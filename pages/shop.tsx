@@ -19,6 +19,8 @@ import Footer from "@/components/footers/Footer";
 import products from "@/json/products";
 import HeaderProduct from "@/components/headers/HeaderProduct";
 import Benefite from "@/components/footers/Benefite";
+import Filter from "@/components/filters/Filter";
+
 export default function Shop() {
   const [order, setOrder] = React.useState("asc");
 
@@ -32,9 +34,7 @@ export default function Shop() {
 
       <div className="tw-mb-8 tw-flex tw-flex-col tw-items-center tw-gap-4 tw-bg-default-100 tw-p-2 md:tw-flex-row md:tw-justify-around">
         <Stack direction="row" gap={2} alignItems="center">
-          <Button startIcon={<TuneOutlined />} className="tw-text-black">
-            Filter
-          </Button>
+          <Filter />
 
           <span>Showing 1-18 of 32 results</span>
         </Stack>
