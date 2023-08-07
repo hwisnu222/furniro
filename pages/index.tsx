@@ -1,13 +1,54 @@
 import Header from "@/components/Header";
 import { Button } from "@mui/material";
 import Image from "next/image";
-// import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import Slider from "react-slick";
+
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 // images
 import FurnitureImage from "../assets/images/furniture.png";
 import BackgroundCor from "../assets/images/background.png";
 import Footer from "@/components/Footer";
 import ProductLayout from "@/components/layouts/ProductLayout";
+
+const settings = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  autoplay: true,
+  autoplaySpeed: 2000,
+  centerMode: true,
+  centerPadding: "60px",
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        infinite: true,
+        dots: true,
+      },
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2,
+        initialSlide: 2,
+      },
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+      },
+    },
+  ],
+};
 
 export default function Index() {
   return (
@@ -43,23 +84,24 @@ export default function Index() {
         title="Browse The Range"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
       >
-        <div className="tw-grid tw-grid-cols-1 tw-gap-12 md:tw-grid-cols-3">
-          {Array.from({ length: 3 }).map((_, index) => (
+        <Slider {...settings}>
+          {Array.from({ length: 6 }).map((_, index) => (
             <div
+              className="tw-w-full tw-cursor-pointer tw-bg-white"
               key={`browser-${index}`}
-              className="tw-w-full tw-cursor-pointer"
             >
               <Image
                 src={FurnitureImage}
                 alt="thumbnail"
                 fill={false}
-                className="tw-mb-4"
+                className="tw-mb-4 md:tw-mx-4"
               />
               <p className="tw-font-bold">Living</p>
             </div>
           ))}
-        </div>
+        </Slider>
       </ProductLayout>
+
       <ProductLayout title="Our Products">
         <div className="tw-mb-8 tw-grid tw-grid-cols-2 tw-gap-4 md:tw-grid-cols-4">
           {Array.from({ length: 8 }).map((item, index) => (
