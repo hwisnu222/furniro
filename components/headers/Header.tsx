@@ -47,7 +47,9 @@ export default function Header() {
     <>
       <div className="tw-sticky tw-top-0 tw-z-30 tw-hidden tw-items-center tw-justify-around tw-bg-white tw-p-4 md:tw-flex">
         <h3>
-          <Image src={Logo} width={152} alt="log-furniro" />
+          <Link href="/">
+            <Image src={Logo} width={152} alt="log-furniro" />
+          </Link>
         </h3>
         <ul className="tw-green-400 tw-flex tw-gap-8 tw-font-medium">
           <li className="hover:tw-text-gray-500">
@@ -180,7 +182,9 @@ export default function Header() {
 
       <div className="tw-sticky tw-top-0 tw-z-30 tw-flex tw-items-center tw-justify-between tw-bg-white tw-p-4 md:tw-hidden">
         <span></span>
-        <Image src={Logo} width={152} alt="log-furniro" />
+        <Link href="/">
+          <Image src={Logo} width={152} alt="log-furniro" />
+        </Link>
         <Menu onClick={handleMenuMobile} className="tw-cursor-pointer" />
         <Drawer anchor="right" open={menuMobile} onClose={handleMenuMobile}>
           <div className="tw-flex tw-items-center tw-justify-between tw-px-2 tw-py-4">
