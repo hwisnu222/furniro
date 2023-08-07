@@ -138,26 +138,20 @@ export default function Index() {
           <h3 className="tw-text-2xl tw-font-bold">
             50+ Beautiful rooms inspiration
           </h3>
-          <p className="tw-mb-8">
-            Our designer already made a lot of beautiful prototipe of rooms that
-            inspire you
+          <p className="tw-mb-8 md:tw-pr-4">
+            Our exceptionally skilled designer has poured their creative
+            brilliance into curating a diverse collection of stunning room
+            prototypes, each meticulously crafted to evoke a unique blend of
+            aesthetics, functionality, and allure.
           </p>
-          <Button variant="contained" className="tw-bg-default-200">
-            Explore More
-          </Button>
         </div>
-        <div className="tw-flex tw-w-3/4 tw-gap-2">
+        <div className="tw-grid tw-w-3/4 tw-grid-cols-2 tw-gap-2">
+          <Image src={FurnitureImage} alt="inpisration" fill={false} />
           <Image
             src={FurnitureImage}
             alt="inpisration"
             fill={false}
-            className="tw-w-full"
-          />
-          <Image
-            src={FurnitureImage}
-            alt="inpisration"
-            fill={false}
-            className="tw-w-full"
+            className="tw-w-full tw-pb-4"
           />
         </div>
       </div>
