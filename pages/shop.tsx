@@ -1,7 +1,7 @@
 import React from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 import {
-  Button,
   MenuItem,
   Select,
   TextField,
@@ -12,7 +12,6 @@ import {
 import Header from "@/components/headers/Header";
 import Products from "@/components/cards/Products";
 
-import { TuneOutlined } from "@mui/icons-material";
 import { Box } from "@mui/system";
 
 import Footer from "@/components/footers/Footer";
@@ -22,10 +21,30 @@ import Benefite from "@/components/footers/Benefite";
 import Filter from "@/components/filters/Filter";
 
 export default function Shop() {
-  const [order, setOrder] = React.useState("asc");
+  const router = useRouter();
+  const pathname = usePathname();
+  const search = useSearchParams();
+  const params = React.useMemo(
+    () => new URLSearchParams(search.toString()),
+    [search],
+  );
+
+  const sort = params.get("s");
+  const [order, setOrder] = React.useState(sort || "highest");
+
+  const createQuery = React.useCallback(
+    (param: any, value: string) => {
+      params.set(param, value);
+      return params.toString();
+    },
+    [params],
+  );
 
   const handleOrder = (event: SelectChangeEvent) => {
-    setOrder(event.target.value);
+    const value = event.target.value as string;
+    setOrder(value);
+    // set query string
+    router.push(`${pathname}?${createQuery("s", value)}`);
   };
   return (
     <>
@@ -47,8 +66,8 @@ export default function Shop() {
           <Stack direction="row" alignItems="center" gap={2}>
             <span>Short By</span>
             <Select value={order} onChange={handleOrder} size="small">
-              <MenuItem value="asc">Asc</MenuItem>
-              <MenuItem value="desc">Desc</MenuItem>
+              <MenuItem value="lowest">Lowest Price</MenuItem>
+              <MenuItem value="highest">Highest Price</MenuItem>
             </Select>
           </Stack>
         </Stack>
