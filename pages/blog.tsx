@@ -2,10 +2,10 @@ import React from "react";
 import { Box, Button, InputAdornment, TextField } from "@mui/material";
 import Image from "next/image";
 
-import Benefite from "@/components/Benefite";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import HeaderProduct from "@/components/HeaderProduct";
+import Benefite from "@/components/footers/Benefite";
+import Footer from "@/components/footers/Footer";
+import Header from "@/components/headers/Header";
+import HeaderProduct from "@/components/headers/HeaderProduct";
 import Container from "@/components/layouts/Container";
 
 import FunitureImg from "../assets/images/furniture.png";

@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "@/components/Header";
+import Header from "@/components/headers/Header";
 import { Button } from "@mui/material";
 import Image from "next/image";
 import Slider from "react-slick";
@@ -10,7 +10,7 @@ import "slick-carousel/slick/slick-theme.css";
 // images
 import FurnitureImage from "../assets/images/furniture.png";
 import BackgroundCor from "../assets/images/background.png";
-import Footer from "@/components/Footer";
+import Footer from "@/components/footers/Footer";
 import ProductLayout from "@/components/layouts/ProductLayout";
 
 const settings = {

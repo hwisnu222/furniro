@@ -14,10 +14,10 @@ import {
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import HeaderProduct from "@/components/HeaderProduct";
-import Benefite from "@/components/Benefite";
+import Footer from "@/components/footers/Footer";
+import Header from "@/components/headers/Header";
+import HeaderProduct from "@/components/headers/HeaderProduct";
+import Benefite from "@/components/footers/Benefite";
 import Container from "@/components/layouts/Container";
 
 import FurnitureImg from "@/assets/images/furniture.png";

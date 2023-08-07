@@ -1,6 +1,6 @@
 import React from "react";
 import { Input, Divider, Box } from "@mui/material";
-import Container from "./layouts/Container";
+import Container from "../layouts/Container";
 import Link from "next/link";
 
 export default function Footer() {

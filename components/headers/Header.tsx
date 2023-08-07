@@ -14,10 +14,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import {
-  PermIdentityOutlined,
   SearchOutlined,
-  FavoriteOutlined,
-  ShoppingCartOutlined,
   CloseOutlined,
   HighlightOffOutlined,
   Menu,
@@ -31,8 +28,8 @@ import {
 } from "@mui/icons-material";
 
 // images
-import Logo from "../assets/images/logo-furniro.png";
-import FunirtureImg from "../assets/images/furniture.png";
+import Logo from "@/assets/images/logo-furniro.png";
+import FunirtureImg from "@/assets/images/furniture.png";
 
 export default function Header() {
   const [drawer, setDrawer] = React.useState<boolean>(false);

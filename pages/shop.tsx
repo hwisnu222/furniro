@@ -9,17 +9,16 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 
-import Header from "@/components/Header";
-import Products from "@/components/Products";
+import Header from "@/components/headers/Header";
+import Products from "@/components/cards/Products";
 
 import { TuneOutlined } from "@mui/icons-material";
 import { Box } from "@mui/system";
 
-import Footer from "@/components/Footer";
+import Footer from "@/components/footers/Footer";
 import products from "@/json/products";
-import HeaderProduct from "@/components/HeaderProduct";
-import Benefite from "@/components/Benefite";
-
+import HeaderProduct from "@/components/headers/HeaderProduct";
+import Benefite from "@/components/footers/Benefite";
 export default function Shop() {
   const [order, setOrder] = React.useState("asc");
 

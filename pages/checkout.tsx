@@ -10,11 +10,11 @@ import {
   Divider,
 } from "@mui/material";
 
-import Benefite from "@/components/Benefite";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
+import Benefite from "@/components/footers/Benefite";
+import Footer from "@/components/footers/Footer";
+import Header from "@/components/headers/Header";
 import Container from "@/components/layouts/Container";
-import HeaderProduct from "@/components/HeaderProduct";
+import HeaderProduct from "@/components/headers/HeaderProduct";
 
 export default function checkout() {
   return (

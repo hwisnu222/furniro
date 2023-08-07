@@ -6,7 +6,7 @@ import {
   LocalShippingOutlined,
   SupportAgentOutlined,
 } from "@mui/icons-material";
-import Container from "./layouts/Container";
+import Container from "../layouts/Container";
 
 const benefites = [
   {

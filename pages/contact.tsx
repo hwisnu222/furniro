@@ -1,9 +1,9 @@
 import React from "react";
 
-import Benefite from "@/components/Benefite";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import HeaderProduct from "@/components/HeaderProduct";
+import Benefite from "@/components/footers/Benefite";
+import Footer from "@/components/footers/Footer";
+import Header from "@/components/headers/Header";
+import HeaderProduct from "@/components/headers/HeaderProduct";
 import Container from "@/components/layouts/Container";
 import { Button, TextField } from "@mui/material";
 import { AccessTime, LocalPhone, LocationOn } from "@mui/icons-material";

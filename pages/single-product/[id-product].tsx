@@ -16,10 +16,10 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
+import Footer from "@/components/footers/Footer";
+import Header from "@/components/headers/Header";
 import ProductLayout from "@/components/layouts/ProductLayout";
-import Products from "@/components/Products";
+import Products from "@/components/cards/Products";
 import Container from "@/components/layouts/Container";
 
 import products from "@/json/products";

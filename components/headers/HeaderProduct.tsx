@@ -1,7 +1,7 @@
 import React from "react";
 import { Breadcrumbs, Typography, Link } from "@mui/material";
 
-import ShopBack from "../assets/images/shop-background.png";
+import ShopBack from "@/assets/images/shop-background.png";
 import { HeaderProductProps, Path } from "@/interfaces/headerProduct.interface";
 
 export default function HeaderProduct(props: HeaderProductProps) {

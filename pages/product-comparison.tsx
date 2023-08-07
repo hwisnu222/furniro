@@ -1,17 +1,17 @@
 import React from "react";
 import Link from "next/link";
 
-import Header from "@/components/Header";
-import HeaderProduct from "@/components/HeaderProduct";
-import Benefite from "@/components/Benefite";
-import Footer from "@/components/Footer";
+import Header from "@/components/headers/Header";
+import HeaderProduct from "@/components/headers/HeaderProduct";
+import Benefite from "@/components/footers/Benefite";
+import Footer from "@/components/footers/Footer";
 import Container from "@/components/layouts/Container";
-import Comparison from "@/components/ComparisonProduct";
+import Comparison from "@/components/cards/ComparisonProduct";
 
 import { Select, MenuItem, SelectChangeEvent, Box } from "@mui/material";
 
 import FurnitureImg from "@/assets/images/furniture.png";
-import TableComparison from "@/components/TableComparison";
+import TableComparison from "@/components/tables/TableComparison";
 import dummyProducts from "@/json/products";
 import general from "@/json/comparison/general.json";
 
