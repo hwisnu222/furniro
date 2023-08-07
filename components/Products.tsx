@@ -18,7 +18,7 @@ export default function Products({ data }: ProductProps) {
           <div className="tw-absolute tw-left-0 tw-top-0 tw-z-20 tw-flex tw-h-full tw-w-full tw-flex-col tw-items-center tw-justify-center tw-bg-[#00000080] tw-opacity-0 tw-duration-300 hover:tw-h-full hover:tw-opacity-100">
             <Button
               variant="contained"
-              className="tw-mb-8 tw-bg-white tw-text-default-200"
+              className="tw-mb-8 tw-bg-white tw-text-default-200 hover:tw-text-white"
             >
               Add to cart
             </Button>
