@@ -36,6 +36,11 @@ export default function Footer() {
                 Contact
               </Link>
             </li>
+            <li>
+              <Link href="/blog" className="hover:tw-text-gray-600">
+                Blog
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
