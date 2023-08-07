@@ -1,7 +1,7 @@
 import React from "react";
-import Header from "@/components/headers/Header";
 import { Button } from "@mui/material";
 import Image from "next/image";
+import Link from "next/link";
 import Slider from "react-slick";
 
 import "slick-carousel/slick/slick.css";
@@ -10,6 +10,7 @@ import "slick-carousel/slick/slick-theme.css";
 // images
 import FurnitureImage from "../assets/images/furniture.png";
 import BackgroundCor from "../assets/images/background.png";
+import Header from "@/components/headers/Header";
 import Footer from "@/components/footers/Footer";
 import ProductLayout from "@/components/layouts/ProductLayout";
 
@@ -76,6 +77,7 @@ export default function Index() {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit
             tellus, luctus nec ullamcorper mattis.
           </p>
+          <Link href="/shop">
           <Button
             variant="contained"
             size="large"
@@ -83,9 +85,9 @@ export default function Index() {
           >
             BUY Now
           </Button>
+          </Link>
         </div>
       </div>
-
       <ProductLayout
         title="Browse The Range"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
