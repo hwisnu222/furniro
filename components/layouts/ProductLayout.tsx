@@ -15,7 +15,7 @@ export default function ProductLayout({
 }: ContentProps) {
   return (
     <Container>
-      <div className=" tw-mb-8 tw-p-12 tw-text-center">
+      <div className=" tw-mb-8 tw-text-center">
         <h3 className="text-red-400 tw-mb-4 tw-text-2xl tw-font-semibold">
           {title}
         </h3>
