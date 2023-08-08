@@ -68,8 +68,8 @@ const DescriptionPannel: React.FC = () => {
 
 const TabPannel = (key: string) => {
   switch (key) {
-    case " additional":
-      return "additonal";
+    case "additional":
+      return "additional";
     case "review":
       return "review";
     default:
@@ -102,24 +102,15 @@ export default function SingleProduct() {
       <div className="tw-container tw-mx-auto tw-mb-8 tw-grid tw-grid-cols-1 tw-gap-4 tw-px-8 md:tw-grid-cols-2 md:tw-gap-20">
         <div className="tw-flex tw-gap-6">
           <Stack direction="column" gap={3}>
+            {Array.from({ length: 3 }).map((_, index: number) => (
             <Image
+                key={`variant-${index}`}
               src={FurnitureImg}
               alt="furniture"
               className="tw-w-full"
               fill={false}
             />
-            <Image
-              src={FurnitureImg}
-              alt="furniture"
-              className="tw-w-full"
-              fill={false}
-            />
-            <Image
-              src={FurnitureImg}
-              alt="furniture"
-              className="tw-w-full"
-              fill={false}
-            />
+            ))}
           </Stack>
           <Image
             src={FurnitureImg}
