@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link"
+import Link from "next/link";
 
 import HeaderCard from "@/components/headers/HeaderCard";
 import DashboardLayout from "@/components/layouts/DasboardLayout";
@@ -28,7 +28,7 @@ export default function list() {
           component={Link}
           href="/admin/product/create"
         >
-          Create Post
+          Create Product
         </Button>
         <Box>
           <Button className="tw-mr-4">Filter</Button>
