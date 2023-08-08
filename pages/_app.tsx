@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import { createTheme, ThemeProvider } from "@mui/material";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
+import { NextSeo } from "next-seo";
 
 // them pmaterial ui
 const theme = createTheme({
@@ -21,9 +22,13 @@ export default function App({
 }: AppProps) {
   return (
     <SessionProvider session={session}>
-    <ThemeProvider theme={theme}>
-      <Component {...pageProps} />
-    </ThemeProvider>
+      <NextSeo
+        title={Component?.meta?.title}
+        description={Component?.meta?.description}
+      />
+      <ThemeProvider theme={theme}>
+        <Component {...pageProps} />
+      </ThemeProvider>
     </SessionProvider>
   );
 }
