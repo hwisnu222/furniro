@@ -4,17 +4,41 @@ import Image from "next/image";
 
 import Logo from "@/assets/images/logo-furniro.png";
 
-import { Avatar } from "@mui/material";
+import { Avatar, IconButton, Menu, MenuItem } from "@mui/material";
 
 export default function HeaderAdmin() {
+  const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
+
+  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchor(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchor(null);
+  };
   return (
     <div>
-      <div className="tw-sticky tw-top-0 tw-z-30 tw-hidden tw-items-center tw-justify-between tw-border-b tw-border-default-100 tw-bg-white tw-p-4 md:tw-flex">
+      <div className="tw-sticky tw-top-0 tw-z-30 tw-flex tw-items-center tw-justify-between tw-border-b tw-border-default-100 tw-bg-white tw-p-4">
         <Link href="/">
           <Image src={Logo} width={152} alt="log-furniro" />
         </Link>
 
-        <Avatar>Menu</Avatar>
+        <IconButton onClick={handleOpenMenu}>
+          <Avatar>Menu</Avatar>
+        </IconButton>
+
+        <Menu
+          id="basic-menu"
+          anchorEl={anchor}
+          open={Boolean(anchor)}
+          onClose={handleCloseMenu}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+        >
+          <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
+          <MenuItem onClick={handleCloseMenu}>My account</MenuItem>
+          <MenuItem onClick={handleCloseMenu}>Logout</MenuItem>
+        </Menu>
       </div>
     </div>
   );
