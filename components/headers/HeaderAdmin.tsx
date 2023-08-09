@@ -23,7 +23,7 @@ export default function HeaderAdmin() {
         </Link>
 
         <IconButton onClick={handleOpenMenu}>
-          <Avatar>Menu</Avatar>
+          <Avatar>A</Avatar>
         </IconButton>
 
         <Menu
