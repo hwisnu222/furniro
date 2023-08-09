@@ -20,16 +20,23 @@ import {
 export default function list() {
   return (
     <DashboardLayout>
-      <HeaderCard title="Blog Lists" />
+      <HeaderCard
+        title="Blog Lists"
+        rightAction={
+          <Button
+            variant="contained"
+            className="tw-bg-default-200"
+            component={Link}
+            href="/admin/blog/create"
+            size="large"
+          >
+            Create Post
+          </Button>
+        }
+      />
       <Box className="tw-mb-4 tw-flex tw-items-center tw-justify-between tw-gap-2">
-        <Button
-          variant="contained"
-          className="tw-bg-default-200"
-          component={Link}
-          href="/admin/blog/create"
-        >
-          Create Post
-        </Button>
+        <p className="tw-text-gray-400">Show from 1 to 20 result</p>
+
         <Box>
           <Button className="tw-mr-4">Filter</Button>
           <TextField placeholder="Search" size="small" />
