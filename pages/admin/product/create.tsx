@@ -49,12 +49,19 @@ export default function CreatePostProduct() {
           value={category}
           label="Category"
           onChange={handleSelectCategory}
-          className="tw-mb-8"
         >
           <MenuItem value="ten">Ten</MenuItem>
           <MenuItem value="twenty">Twenty</MenuItem>
           <MenuItem value="thirty">Thirty</MenuItem>
         </Select>
+        <Box className="tw-mb-8 tw-flex tw-gap-4">
+          <TextField label="Price" className="tw-w-full" type="number" />
+          <Select value="ten" label="Discount" className="tw-w-full">
+            <MenuItem value="ten">10%</MenuItem>
+            <MenuItem value="twenty">20%</MenuItem>
+            <MenuItem value="thirty">30%</MenuItem>
+          </Select>
+        </Box>
         <Editor
           onInit={(evt, editor) => (editorRef.current = editor)}
           initialValue="<p>This is the initial content of the editor.</p>"
