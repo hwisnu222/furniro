@@ -90,3 +90,16 @@ export const GET_PRODUCT = gql`
     }
   }
 `;
+
+export const GET_CATEGORY = gql`
+  query getCategory {
+    categories {
+      data {
+        id
+        attributes {
+          category
+        }
+      }
+    }
+  }
+`;

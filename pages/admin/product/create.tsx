@@ -2,6 +2,8 @@ import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import Dropzone from "react-dropzone";
 import Image from "next/image";
+import { useMutation } from "@apollo/client";
+import client from "@/graphql/client";
 import {
   TextField,
   Button,
@@ -14,19 +16,160 @@ import HeaderCard from "@/components/headers/HeaderCard";
 import DashboardLayout from "@/components/layouts/DasboardLayout";
 
 import { ImageOutlined } from "@mui/icons-material";
+import { CREATE_PRODUCT } from "@/graphql/mutations/product.mutation";
+import { GET_CATEGORY } from "@/graphql/queries/product.query";
+import { API_BASE } from "@/config/api";
 
-export default function CreatePostProduct() {
+enum Type {
+  NAME = "NAME",
+  PRICE = "PRICE",
+  COLOR = "COLOR",
+  SIZE = "SIZE",
+  DESCRIPTION = "DESCRIPTION",
+  SUMMARY = "SUMMARY",
+  DISSCOUNT = "DISSCOUNT",
+  CATEGORY = "CATEGORY",
+  SKU = "SKU",
+  STOCK = "STOCK",
+  FILE = "FILE",
+}
+
+const initialState = {
+  name: "",
+  price: 0,
+  color: [],
+  size: [],
+  description: "",
+  summary: "",
+  disscount: 0,
+  category: "",
+  sku: "",
+  stock: 0,
+  file: null,
+};
+
+const reducer = (state = initialState, action: any) => {
+  switch (action.type) {
+    case Type.NAME:
+      return {
+        ...state,
+        name: action.payload,
+      };
+    case Type.PRICE:
+      return {
+        ...state,
+        price: parseInt(action.payload),
+      };
+    case Type.COLOR:
+      return {
+        ...state,
+        color: action.payload,
+      };
+    case Type.SIZE:
+      return {
+        ...state,
+        size: action.payload,
+      };
+    case Type.DESCRIPTION:
+      return {
+        ...state,
+        description: action.payload,
+      };
+    case Type.SUMMARY:
+      return {
+        ...state,
+        summary: action.payload,
+      };
+    case Type.DISSCOUNT:
+      return {
+        ...state,
+        disscount: parseInt(action.payload),
+      };
+    case Type.CATEGORY:
+      return {
+        ...state,
+        category: parseInt(action.payload),
+      };
+    case Type.SKU:
+      return {
+        ...state,
+        sku: action.payload,
+      };
+    case Type.STOCK:
+      return {
+        ...state,
+        stock: parseInt(action.payload),
+      };
+    case Type.FILE:
+      return {
+        ...state,
+        file: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+interface CategoryProps {
+  id: number;
+  attributes: {
+    category: string;
+  };
+}
+
+export default function CreatePostProduct({
+  categories,
+}: {
+  categories: CategoryProps[];
+}) {
   const editorRef = React.useRef(null);
-  const [category, setCategory] = React.useState("");
-  const [file, setFile] = React.useState<any | null>(null);
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  console.log(categories);
 
+  const [mutate] = useMutation(CREATE_PRODUCT);
+  const uploadFile = async () => {
+    const formData = new FormData();
+    formData.append("files", state.file);
+    const uploads = await API_BASE.post("/uploads", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    console.log(uploads);
+  };
   const handleSelectCategory = (event: SelectChangeEvent) => {
-    setCategory(event.target.value as string);
+    dispatch({ type: Type.CATEGORY, payload: event.target.value });
+  };
+
+  const handleSelectDisscount = (event: SelectChangeEvent) => {
+    dispatch({ type: Type.DISSCOUNT, payload: event.target.value });
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const target = event.target;
+    dispatch({ type: target.name, payload: target.value });
+  };
+
+  const submitPost = () => {
+    uploadFile();
+    // const variables = state;
+    // delete variables.file;
+
+    // dispatch({
+    //   type: Type.DESCRIPTION,
+    //   payload: editorRef.curreNT.getContent(),
+    // });
+
+    // mutate({
+    //   variables: {
+    //     data: variables,
+    //   },
+    // });
   };
 
   const handleDrop = (acceptedFile: any) => {
-    setFile(acceptedFile[0]);
-    console.log(file);
+    dispatch({ type: Type.FILE, payload: acceptedFile[0] });
   };
 
   return (
@@ -38,6 +181,7 @@ export default function CreatePostProduct() {
             variant="contained"
             className="tw-bg-default-200"
             size="large"
+            onClick={submitPost}
           >
             Publish
           </Button>
@@ -45,27 +189,40 @@ export default function CreatePostProduct() {
       />
       <Box className="tw-flex tw-flex-col tw-gap-6 md:tw-flex-row">
         <Box className="tw-flex tw-flex-col tw-gap-4 md:tw-w-3/4">
-          <TextField label="Title" />
+          <TextField label="Name" onChange={handleChange} name={Type.NAME} />
           <Select
-            value={category}
+            value={state.category}
             label="Category"
             onChange={handleSelectCategory}
           >
-            <MenuItem value="ten">Ten</MenuItem>
-            <MenuItem value="twenty">Twenty</MenuItem>
-            <MenuItem value="thirty">Thirty</MenuItem>
+            {categories.map((category, index) => (
+              <MenuItem value={category.id} key={`category-${index}`}>
+                {category.attributes.category}
+              </MenuItem>
+            ))}
           </Select>
           <Box className="tw-mb-8 tw-flex tw-gap-4">
-            <TextField label="Price" className="tw-w-full" type="number" />
-            <Select value="ten" label="Discount" className="tw-w-full">
-              <MenuItem value="ten">10%</MenuItem>
-              <MenuItem value="twenty">20%</MenuItem>
-              <MenuItem value="thirty">30%</MenuItem>
+            <TextField
+              label="Price"
+              className="tw-w-full"
+              type="number"
+              onChange={handleChange}
+              name={Type.PRICE}
+            />
+            <Select
+              value="ten"
+              label="Discount"
+              className="tw-w-full"
+              onChange={handleSelectDisscount}
+            >
+              <MenuItem value={10}>10%</MenuItem>
+              <MenuItem value={20}>20%</MenuItem>
+              <MenuItem value={30}>30%</MenuItem>
             </Select>
           </Box>
           <Editor
             onInit={(evt, editor) => (editorRef.current = editor)}
-            initialValue="<p>This is the initial content of the editor.</p>"
+            initialValue="<p>product...</p>"
             init={{
               height: 500,
               menubar: false,
@@ -91,9 +248,9 @@ export default function CreatePostProduct() {
               >
                 <input {...getInputProps()} />
                 <Box className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-3 md:tw-flex-row ">
-                  {file ? (
+                  {state.file ? (
                     <Image
-                      src={URL.createObjectURL(file)}
+                      src={URL.createObjectURL(state.file)}
                       alt="file-image"
                       fill={false}
                       width={100}
@@ -103,19 +260,35 @@ export default function CreatePostProduct() {
                   ) : (
                     <ImageOutlined />
                   )}
-                  <p>{file?.name || `Drag your file here`}</p>
+                  <p>{state.file?.name || `Drag your file here`}</p>
                 </Box>
               </Box>
             )}
           </Dropzone>
         </Box>
         <Box className="tw-flex tw-flex-col tw-gap-4">
-          <TextField label="SKU" />
-          <TextField label="Stock" type="number" />
-          <TextField label="Size" />
-          <TextField label="Color" />
+          <TextField label="SKU" onChange={handleChange} name={Type.SKU} />
+          <TextField
+            label="Stock"
+            type="number"
+            onChange={handleChange}
+            name={Type.STOCK}
+          />
+          <TextField label="Size" onChange={handleChange} name={Type.NAME} />
+          <TextField label="Color" onChange={handleChange} name={Type.NAME} />
         </Box>
       </Box>
     </DashboardLayout>
   );
+}
+
+export async function getServerSideProps() {
+  const { data } = await client.query({
+    query: GET_CATEGORY,
+  });
+  return {
+    props: {
+      categories: data.categories.data,
+    },
+  };
 }
