@@ -1,5 +1,6 @@
 import React from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useQuery } from "@apollo/client";
 
 import {
   MenuItem,
@@ -10,12 +11,13 @@ import {
 } from "@mui/material";
 
 import Header from "@/components/headers/Header";
-import Products from "@/components/cards/Products";
 
 import { Box } from "@mui/system";
 
+import { GET_PRODUCTS } from "@/graphql/queries/product.query";
+
+import Products from "@/components/cards/Products";
 import Footer from "@/components/footers/Footer";
-import products from "@/json/products";
 import HeaderProduct from "@/components/headers/HeaderProduct";
 import Benefite from "@/components/footers/Benefite";
 import Filter from "@/components/filters/Filter";
@@ -39,6 +41,9 @@ export default function Shop() {
     },
     [params],
   );
+
+  const { data } = useQuery(GET_PRODUCTS);
+  const products = data?.products?.data;
 
   const handleOrder = (event: SelectChangeEvent) => {
     const value = event.target.value as string;
@@ -73,7 +78,7 @@ export default function Shop() {
         </Stack>
       </div>
       <Box className="tw-container tw-mx-auto tw-px-10">
-        <Products data={products()} />
+        <Products data={products} />
       </Box>
 
       <Benefite />
