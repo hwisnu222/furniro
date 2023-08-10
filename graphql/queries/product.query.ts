@@ -7,11 +7,16 @@ export const GET_PRODUCTS = gql`
         id
         attributes {
           name
+          summary
           description
           rating
           additional
           price
           disscount
+          color
+          stock
+          size
+          tag
           image {
             data {
               id
@@ -51,11 +56,17 @@ export const GET_PRODUCT = gql`
         id
         attributes {
           name
+          summary
           description
           rating
           additional
           price
           disscount
+          color
+          stock
+          size
+          tag
+          sku
           image {
             data {
               id

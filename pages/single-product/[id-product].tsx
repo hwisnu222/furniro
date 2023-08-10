@@ -1,6 +1,9 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/router";
+import { useQuery } from "@apollo/client";
+import client from "@/graphql/client";
 import {
   Breadcrumbs,
   Link,
@@ -15,6 +18,9 @@ import {
   Tab,
 } from "@mui/material";
 import Image from "next/image";
+import { AddOutlined } from "@mui/icons-material";
+
+import { GET_PRODUCT, GET_PRODUCTS } from "@/graphql/queries/product.query";
 
 import Footer from "@/components/footers/Footer";
 import Header from "@/components/headers/Header";
@@ -22,32 +28,15 @@ import ProductLayout from "@/components/layouts/ProductLayout";
 import Products from "@/components/cards/Products";
 import Container from "@/components/layouts/Container";
 
-import products from "@/json/products";
 import FurnitureImg from "../../assets/images/furniture.png";
-import { AddOutlined } from "@mui/icons-material";
+import { convertCurrency } from "@/utils/currency";
 
-const DescriptionPannel: React.FC = () => {
+import { ItemProduct } from "@/interfaces/product.interface";
+
+const DescriptionPanel = ({ description }: { description: string }) => {
   return (
     <Container>
-      <p className="tw-text-gray-400">
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis,
-        voluptatem exercitationem consectetur non ratione asperiores sed
-        corporis nam perferendis, cumque inventore. Itaque et distinctio fugiat
-        odio porro provident consequatur repellat eos quasi obcaecati tenetur,
-        ducimus id cupiditate expedita aliquam, deserunt laborum. Repellat
-        placeat qui in tenetur vero modi, porro omnis cupiditate magnam ducimus
-        consequuntur vitae veniam voluptate amet nam reprehenderit fuga
-        perspiciatis quod eveniet inventore mollitia, laborum fugiat! Pariatur
-        sapiente laborum adipisci commodi? Beatae maiores rem vel, delectus hic
-        veritatis debitis? Vitae repellat, atque explicabo aspernatur
-        repudiandae dolore recusandae unde libero! Molestiae fugit beatae, quasi
-        unde temporibus at vero impedit velit quae maxime earum eaque, qui fuga
-        ipsum, nihil illo praesentium quidem numquam doloremque! Tenetur
-        similique debitis nisi, sapiente amet soluta maxime, exercitationem
-        impedit molestiae aut odio voluptatum dignissimos t consequatur ipsa
-        laudantium? Cupiditate voluptas tempore, quos odio autem delectus
-        excepturi culpa perspiciatis, maiores, consectetur assumenda.
-      </p>
+      <p className="tw-text-gray-400">{description}</p>
       <Box className="tw-grid tw-w-full tw-grid-cols-1 tw-gap-4  md:tw-grid-cols-2">
         <Image
           src={FurnitureImg}
@@ -66,19 +55,37 @@ const DescriptionPannel: React.FC = () => {
   );
 };
 
-const TabPannel = (key: string) => {
+const TabPannel = (key: string, product: any | string) => {
   switch (key) {
     case "additional":
-      return "additional";
+      return <p className="tw-text-gray-400">{product.additional}</p>;
     case "review":
-      return "review";
+      return <p className="tw-text-gray-400">Review</p>;
     default:
-      return <DescriptionPannel />;
+      return <DescriptionPanel description={product.description} />;
   }
 };
 
-export default function SingleProduct() {
+const LIMIT_BUY = 0;
+
+export default function SingleProduct({
+  product,
+  products,
+}: {
+  product: any;
+  products: any;
+}) {
   const [tab, setTab] = React.useState("description");
+  const [buyTotal, setBuyTotal] = React.useState(0);
+
+  const handleTotalProduct = (action: string) => {
+    if (action === "increase" && buyTotal <= product?.stock) {
+      return setBuyTotal((prev: number) => prev + 1);
+    }
+    if (action === "decrease" && buyTotal > LIMIT_BUY) {
+      setBuyTotal((prev: number) => prev - 1);
+    }
+  };
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: string) => {
     setTab(newValue);
@@ -95,7 +102,7 @@ export default function SingleProduct() {
             Shop
           </Link>
           <Link underline="hover" color="inherit">
-            id-product2323
+            {product?.name}
           </Link>
         </Breadcrumbs>
       </div>
@@ -103,13 +110,18 @@ export default function SingleProduct() {
         <div className="tw-flex tw-gap-6">
           <Stack direction="column" gap={3}>
             {Array.from({ length: 3 }).map((_, index: number) => (
-            <Image
+              <Image
                 key={`variant-${index}`}
-              src={FurnitureImg}
-              alt="furniture"
-              className="tw-w-full"
-              fill={false}
-            />
+                src={
+                  process.env.NEXT_PUBLIC_MEDIA +
+                  product?.image?.data?.attributes?.url
+                }
+                alt="furniture"
+                width={100}
+                height={100}
+                className="tw-w-52"
+                fill={false}
+              />
             ))}
           </Stack>
           <Image
@@ -120,53 +132,52 @@ export default function SingleProduct() {
           />
         </div>
         <Box gap={6} className="tw-w-full">
-          <h3 className="tw-text-4xl">Furniture</h3>
+          <h3 className="tw-text-4xl">{product?.name}</h3>
           <p className="tw-text-xl tw-font-semibold tw-text-gray-300">
-            Rp 25.000.000
+            {convertCurrency(product?.price)}
           </p>
           <Stack direction="row" alignItems="center">
-            <Rating value={4} />
+            <Rating value={product.rating} />
             <Divider orientation="vertical" className="tw-mx-2 tw-my-6" />
             <span className="tw-text-sm tw-text-gray-300">
               5 Customer Review
             </span>
           </Stack>
-          <p className="tw-mb-8">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Natus,
-            amet ipsum vero illum incidunt aliquam nihil at enim officiis,
-            dolores modi excepturi molestias commodi eius quae. Adipisci ad
-            quaerat repellendus quibusdam nostrum natus blanditiis eligendi
-            accusantium quae, maxime incidunt voluptatum expedita perspiciatis
-            velit voluptate iure sit quos, libero totam est vero impedit. Ex
-            quia libero illo suscipit nam eum, recusandae dignissimos. Nesciunt
-            totam vero quas suscipit. Dolor illo, exercitationem asperiores
-            quidem blanditiis, tempora provident repellat veniam illum assumenda
-            excepturi quam facilis modi accusamus deleniti perferendis vitae.
-            Ipsam magni rem totam culpa saepe veniam eveniet voluptatibus,
-            magnam iure? Eos, ad unde?
-          </p>
+          <p className="tw-mb-8">{product?.summary}</p>
 
-          <h3 className="tw-mb-2 tw-font-semibold tw-text-gray-400">Size</h3>
-          <div className="tw-mb-8 tw-flex tw-gap-2">
-            {["L", "XL", "XS"].map((size: string, index: number) => (
-              <span
-                className="tw-flex tw-h-10 tw-w-10 tw-cursor-pointer tw-items-center tw-justify-center tw-rounded-md tw-bg-default-100 hover:tw-bg-default-200 hover:tw-text-white"
-                key={`size-${index}`}
-              >
-                {size}
-              </span>
-            ))}
-          </div>
+          {product?.size.length && (
+            <>
+              <h3 className="tw-mb-2 tw-font-semibold tw-text-gray-400">
+                Size
+              </h3>
+              <div className="tw-mb-8 tw-flex tw-gap-2">
+                {product?.size?.map((size: string, index: number) => (
+                  <span
+                    className="tw-flex tw-h-10 tw-w-10 tw-cursor-pointer tw-items-center tw-justify-center tw-rounded-md tw-bg-default-100 hover:tw-bg-default-200 hover:tw-text-white"
+                    key={`size-${index}`}
+                  >
+                    {size}
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
 
-          <h3 className="tw-mb-2 tw-font-semibold tw-text-gray-400">Color</h3>
-          <div className="tw-flex tw-gap-2">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <span
-                className="tw-h-6 tw-w-6 tw-cursor-pointer tw-rounded-full tw-border-2 tw-border-transparent tw-bg-purple-500 hover:tw-border-gray-200"
-                key={`color-${index}`}
-              ></span>
-            ))}
-          </div>
+          {product?.color.length && (
+            <>
+              <h3 className="tw-mb-2 tw-font-semibold tw-text-gray-400">
+                Color
+              </h3>
+              <div className="tw-flex tw-gap-2">
+                {product?.color.map((color: string, index: number) => (
+                  <span
+                    className={`tw-h-6 tw-w-6 tw-cursor-pointer tw-rounded-full tw-border-2 tw-border-transparent tw-bg-[${color}] hover:tw-border-gray-200`}
+                    key={`color-${index}`}
+                  ></span>
+                ))}
+              </div>
+            </>
+          )}
 
           <div className="tw-flex tw-w-full tw-flex-col tw-items-center tw-justify-center tw-gap-4 tw-py-4 md:tw-flex-row  md:tw-items-center md:tw-justify-start">
             <Stack
@@ -174,11 +185,11 @@ export default function SingleProduct() {
               alignItems="center"
               className="tw-rounded-md tw-border-2"
             >
-              <IconButton>
+              <IconButton onClick={() => handleTotalProduct("decrease")}>
                 <AddOutlined />
               </IconButton>
-              <span>1</span>
-              <IconButton>
+              <span>{buyTotal}</span>
+              <IconButton onClick={() => handleTotalProduct("increase")}>
                 <AddOutlined />
               </IconButton>
             </Stack>
@@ -192,15 +203,22 @@ export default function SingleProduct() {
             <tbody>
               <tr>
                 <td className="tw-py-2 tw-pr-4">SKU</td>
-                <td>: SS01</td>
+                <td>: {product?.sku || "-"}</td>
               </tr>
               <tr>
                 <td className="tw-py-2 tw-pr-4">Category</td>
-                <td>: Sofas</td>
+                <td>: {product?.category.data.attributes.category}</td>
               </tr>
               <tr>
                 <td className="tw-py-2 tw-pr-4">Tags</td>
-                <td>: Sofa, Chair, Home, Shop</td>
+                <td>
+                  :
+                  {product?.tag
+                    ? product?.tag.map((tag: string, index: number) => (
+                        <span key={`tag-${index}`}>{tag}, </span>
+                      ))
+                    : "-"}
+                </td>
               </tr>
               <tr>
                 <td className="tw-py-2 tw-pr-4">Share</td>
@@ -222,15 +240,40 @@ export default function SingleProduct() {
         >
           <Tab value="description" label="Description" />
           <Tab value="additional" label="Additional Informations" />
-          <Tab value="review" label="Reviews (3)" />
+          <Tab
+            value="review"
+            label={`Reviews (${product.review?.length || 0})`}
+          />
         </Tabs>
-        {TabPannel(tab)}
+        {TabPannel(tab, product)}
       </Container>
 
       <ProductLayout title="Related Products">
-        <Products data={products()} />
+        <Products data={products} />
       </ProductLayout>
       <Footer />
     </>
   );
+}
+
+export async function getServerSideProps(ctx: any) {
+  console.log(ctx);
+  const idProduct = ctx.params["id-product"];
+  const { data } = await client.query({
+    query: GET_PRODUCT,
+    variables: {
+      id: idProduct,
+    },
+  });
+  const { data: dataProducts } = await client.query({
+    query: GET_PRODUCTS,
+  });
+  const product = data?.products?.data[0].attributes;
+  const products = dataProducts?.products?.data.slice(0, 8);
+  return {
+    props: {
+      product,
+      products,
+    },
+  };
 }
