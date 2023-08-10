@@ -24,18 +24,18 @@ export default function Products({ data }: ProductProps) {
             </Button>
             <ul className="tw-grid tw-grid-cols-2 tw-gap-4 tw-font-bold tw-text-white">
               <li className="cursor-pointer tw-flex tw-items-center tw-gap-1 tw-text-sm">
-                <Reply size="small" /> Share
+                <Reply className="tw-h-6 tw-w-6" /> Share
               </li>
               <li className="cursor-pointer tw-flex tw-items-center tw-gap-1 tw-text-sm">
-                <FavoriteBorder size="small" /> <span>Like</span>
+                <FavoriteBorder className="tw-h-6 tw-w-6" /> <span>Like</span>
               </li>
               <Link href={`/product-comparison?current=${index}&compare=5`}>
                 <li className="cursor-pointer tw-flex tw-items-center tw-gap-1 tw-text-sm">
-                  <Compare size="small" />
+                  <Compare className="tw-h-6 tw-w-6" />
                   Compare
                 </li>
               </Link>
-              <Link href={`/single-product/${index}`}>
+              <Link href={`/single-product/${item.id}`}>
                 <li className="cursor-pointer  tw-flex tw-items-center tw-gap-1 tw-text-sm">
                   <Details />
                   Detail
@@ -45,24 +45,33 @@ export default function Products({ data }: ProductProps) {
           </div>
 
           <Avatar className="tw-absolute tw-right-4 tw-top-4 tw-bg-red-400">
-            <span className="tw-text-sm">-30%</span>
+            <span className="tw-text-sm">{item?.attributes?.disscount}%</span>
           </Avatar>
 
           <Image
-            src={item.image}
+            src={
+              process.env.NEXT_PUBLIC_MEDIA +
+              item.attributes.image?.data.attributes.url
+            }
             alt="products"
+            fill={false}
+            width={100}
             height={100}
             className="tw-h-72 tw-w-full tw-object-cover"
           />
           <div className="tw-flex tw-flex-col tw-gap-2 tw-p-4">
-            <h3 className="tw-text-xl tw-font-bold">{item.title}</h3>
-            <p className="tw-text-gray-500">{item.category}</p>
+            <h3 className="tw-text-xl tw-font-bold">{item.attributes.name}</h3>
+            <p className="tw-text-gray-500">
+              {item.attributes.category?.data.attributes.name || "-"}
+            </p>
             <div className="tw-flex tw-flex-col tw-items-start tw-justify-between tw-gap-2 md:tw-flex-row md:tw-items-center">
               <s className="tw-inline tw-text-sm tw-text-gray-400">
-                {convertCurrency(item.price)}
+                {convertCurrency(item?.attributes.price)}
               </s>
               <strong className="tw-inline tw-text-default-200">
-                {convertCurrency(item.price - 2488)}
+                {convertCurrency(
+                  (item?.attributes.disscount / 100) * item?.attributes.price,
+                )}
               </strong>
             </div>
           </div>
