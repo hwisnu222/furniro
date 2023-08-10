@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.1",
@@ -23,6 +24,7 @@
     "clsx": "^2.0.0",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.12",
+    "graphql": "^16.7.1",
     "next": "13.4.12",
     "next-auth": "^4.22.3",
     "next-seo": "^6.1.0",
