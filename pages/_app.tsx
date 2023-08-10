@@ -9,6 +9,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { ApolloProvider } from "@apollo/client";
+import client from "@/graphql/client";
 
 // them pmaterial ui
 const theme = createTheme({
@@ -30,15 +32,17 @@ export default function App({
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
-        <SessionProvider session={session}>
-          <NextSeo
-            title={Component?.meta?.title}
-            description={Component?.meta?.description}
-          />
-          <ThemeProvider theme={theme}>
-            <Component {...pageProps} />
-          </ThemeProvider>
-        </SessionProvider>
+        <ApolloProvider client={client}>
+          <SessionProvider session={session}>
+            <NextSeo
+              title={Component?.meta?.title}
+              description={Component?.meta?.description}
+            />
+            <ThemeProvider theme={theme}>
+              <Component {...pageProps} />
+            </ThemeProvider>
+          </SessionProvider>
+        </ApolloProvider>
       </Hydrate>
     </QueryClientProvider>
   );
