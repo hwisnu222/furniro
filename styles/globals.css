@@ -24,4 +24,10 @@ body {
   @apply tw-bg-default-100 tw-flex tw-justify-around tw-p-2 tw-mb-8;
 }
 
+.slick-center{
+  transform: scale(1.1);
+  transform-origin: center;
+  transition: all 1 ease-in-out;
+}
+
 
