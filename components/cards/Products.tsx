@@ -51,18 +51,18 @@ export default function Products({ data }: ProductProps) {
           <Image
             src={
               process.env.NEXT_PUBLIC_MEDIA +
-              item.attributes.image?.data.attributes.url
+              item.attributes.image?.data?.attributes.url
             }
             alt="products"
             fill={false}
-            width={100}
-            height={100}
+            width={200}
+            height={200}
             className="tw-h-72 tw-w-full tw-object-cover"
           />
           <div className="tw-flex tw-flex-col tw-gap-2 tw-p-4">
             <h3 className="tw-text-xl tw-font-bold">{item.attributes.name}</h3>
             <p className="tw-text-gray-500">
-              {item.attributes.category?.data.attributes.name || "-"}
+              {item.attributes.category?.data?.attributes.category || "-"}
             </p>
             <div className="tw-flex tw-flex-col tw-items-start tw-justify-between tw-gap-2 md:tw-flex-row md:tw-items-center">
               <s className="tw-inline tw-text-sm tw-text-gray-400">
