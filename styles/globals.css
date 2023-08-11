@@ -25,9 +25,13 @@ body {
 }
 
 .slick-center{
-  transform: scale(1.1);
+  transform: scale(1) !important;
   transform-origin: center;
   transition: all 1 ease-in-out;
+}
+
+.click-slide{
+  transform: scale(0.7);
 }
 
 
