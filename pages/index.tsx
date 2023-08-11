@@ -13,6 +13,10 @@ import BackgroundCor from "../assets/images/background.png";
 import Header from "@/components/headers/Header";
 import Footer from "@/components/footers/Footer";
 import ProductLayout from "@/components/layouts/ProductLayout";
+import client from "@/graphql/client";
+import { GET_PRODUCTS } from "@/graphql/queries/product.query";
+import { ItemProduct } from "@/interfaces/product.interface";
+import { convertCurrency } from "@/utils/currency";
 
 const settings = {
   dots: true,
@@ -52,7 +56,7 @@ const settings = {
   ],
 };
 
-export default function Index() {
+export default function Index({ products }: { products: ItemProduct[] }) {
   const [more, setMore] = React.useState(false);
 
   const handleMoreProduct = () => {
@@ -78,13 +82,13 @@ export default function Index() {
             tellus, luctus nec ullamcorper mattis.
           </p>
           <Link href="/shop">
-          <Button
-            variant="contained"
-            size="large"
-            className="tw-bg-default-200"
-          >
-            BUY Now
-          </Button>
+            <Button
+              variant="contained"
+              size="large"
+              className="tw-bg-default-200"
+            >
+              BUY Now
+            </Button>
           </Link>
         </div>
       </div>
@@ -93,18 +97,23 @@ export default function Index() {
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
       >
         <Slider {...settings}>
-          {Array.from({ length: 6 }).map((_, index) => (
+          {products.map((product, index) => (
             <div
               className="tw-w-full tw-cursor-pointer tw-bg-white"
               key={`browser-${index}`}
             >
               <Image
-                src={FurnitureImage}
+                src={
+                  process.env.NEXT_PUBLIC_MEDIA +
+                  product.attributes.image?.data?.attributes.url
+                }
                 alt="thumbnail"
+                width={500}
+                height={200}
                 fill={false}
                 className="tw-mb-4 md:tw-mx-4"
               />
-              <p className="tw-font-bold">Living</p>
+              <p className="tw-font-bold">{product.attributes.name}</p>
             </div>
           ))}
         </Slider>
@@ -112,28 +121,37 @@ export default function Index() {
 
       <ProductLayout title="Our Products">
         <div className="tw-mb-8 tw-grid tw-grid-cols-2 tw-gap-4 md:tw-grid-cols-4">
-          {Array.from({ length: more ? 16 : 8 }).map((item, index) => (
+          {products.slice(0, more ? 8 : 4).map((item, index) => (
             <section
               key={`product-${index}`}
               className="tw-gap-4 tw-bg-gray-200 tw-text-left"
             >
               <Image
-                src={FurnitureImage}
+                src={
+                  (process.env.NEXT_PUBLIC_MEDIA +
+                    item.attributes.image?.data?.attributes.url) as string
+                }
+                width={200}
+                height={200}
                 alt="products"
                 fill={false}
                 className="tw-w-full"
               />
               <div className="tw-p-4">
-                <h3 className="tw-font-bold">Grifo</h3>
-                <p className="tw-text-gray-500">Night lamp</p>
-                <strong>Rp 1.500.000</strong>
+                <h3 className="tw-font-bold">{item.attributes.name}</h3>
+                <p className="tw-text-gray-500">
+                  {item.attributes.category.data?.attributes.category}
+                </p>
+                <strong>{convertCurrency(item.attributes.price)}</strong>
               </div>
             </section>
           ))}
         </div>
-        <Button variant="outlined" onClick={handleMoreProduct}>
-          Show {more ? "Less" : "More"}
-        </Button>
+        {products.length > 4 && (
+          <Button variant="outlined" onClick={handleMoreProduct}>
+            Show {more ? "Less" : "More"}
+          </Button>
+        )}
       </ProductLayout>
       <div className="tw-container tw-mx-auto tw-grid tw-grid-cols-1 tw-items-center tw-gap-4 tw-px-10 md:tw-grid-cols-2">
         <div>
@@ -175,4 +193,17 @@ export default function Index() {
       <Footer />
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const { data } = await client.query({
+    query: GET_PRODUCTS,
+  });
+  const products = data.products.data;
+
+  return {
+    props: {
+      products,
+    },
+  };
 }
