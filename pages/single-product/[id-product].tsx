@@ -36,7 +36,10 @@ import { ItemProduct } from "@/interfaces/product.interface";
 const DescriptionPanel = ({ description }: { description: string }) => {
   return (
     <Container>
-      <p className="tw-text-gray-400">{description}</p>
+      <p
+        className="tw-text-gray-400"
+        dangerouslySetInnerHTML={{ __html: description }}
+      ></p>
       <Box className="tw-grid tw-w-full tw-grid-cols-1 tw-gap-4  md:tw-grid-cols-2">
         <Image
           src={FurnitureImg}
@@ -145,7 +148,7 @@ export default function SingleProduct({
           </Stack>
           <p className="tw-mb-8">{product?.summary}</p>
 
-          {product?.size.length && (
+          {product?.size?.length && (
             <>
               <h3 className="tw-mb-2 tw-font-semibold tw-text-gray-400">
                 Size
@@ -163,7 +166,7 @@ export default function SingleProduct({
             </>
           )}
 
-          {product?.color.length && (
+          {product?.color?.length && (
             <>
               <h3 className="tw-mb-2 tw-font-semibold tw-text-gray-400">
                 Color
@@ -207,7 +210,7 @@ export default function SingleProduct({
               </tr>
               <tr>
                 <td className="tw-py-2 tw-pr-4">Category</td>
-                <td>: {product?.category.data.attributes.category}</td>
+                <td>: {product?.category.data?.attributes.category}</td>
               </tr>
               <tr>
                 <td className="tw-py-2 tw-pr-4">Tags</td>
