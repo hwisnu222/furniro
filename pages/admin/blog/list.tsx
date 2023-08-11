@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 
 import HeaderCard from "@/components/headers/HeaderCard";
-import DashboardLayout from "@/components/layouts/DasboardLayout";
+import DashboardLayout from "@/components/layouts/DashboardAdminLayout";
 
 import {
   TableContainer,
@@ -21,7 +21,7 @@ import client from "@/graphql/client";
 import { GET_BLOGS } from "@/graphql/queries/blog.query";
 
 import { ListBlogProps } from "@/interfaces/listBlogs.interface";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 
 export default function List({ blogs }: { blogs: ListBlogProps[] }) {
   const [blogsList, setBlogsList] = React.useState(blogs || []);

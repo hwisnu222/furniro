@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useLazyQuery } from "@apollo/client";
 
 import HeaderCard from "@/components/headers/HeaderCard";
-import DashboardLayout from "@/components/layouts/DasboardLayout";
+import DashboardLayout from "@/components/layouts/DashboardAdminLayout";
 
 import {
   TableContainer,

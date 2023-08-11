@@ -13,7 +13,7 @@ import {
   Select,
 } from "@mui/material";
 import HeaderCard from "@/components/headers/HeaderCard";
-import DashboardLayout from "@/components/layouts/DasboardLayout";
+import DashboardLayout from "@/components/layouts/DashboardAdminLayout";
 
 import { ImageOutlined } from "@mui/icons-material";
 import { CREATE_PRODUCT } from "@/graphql/mutations/product.mutation";
