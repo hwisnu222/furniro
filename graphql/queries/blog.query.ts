@@ -8,6 +8,13 @@ export const GET_BLOGS = gql`
         attributes {
           title
           article
+          category_blog {
+            data {
+              attributes {
+                category
+              }
+            }
+          }
           image {
             data {
               id
@@ -34,6 +41,58 @@ export const GET_BLOGS = gql`
           page
           pageSize
           pageCount
+        }
+      }
+    }
+  }
+`;
+
+export const CREATE_POST_BLOG = gql`
+  mutation createBlog($data: BlogInput!) {
+    createBlog(data: $data) {
+      data {
+        id
+      }
+    }
+  }
+`;
+
+export const GET_CATEGORY_BLOG = gql`
+  query getCategoryBlog {
+    categoryBlogs {
+      data {
+        id
+        attributes {
+          category
+        }
+      }
+    }
+  }
+`;
+
+export const GET_DETAIL_BLOG = gql`
+  query getBlog($id: ID) {
+    blog(id: $id) {
+      data {
+        attributes {
+          title
+          article
+          image {
+            data {
+              attributes {
+                url
+              }
+            }
+          }
+          category_blog {
+            data {
+              attributes {
+                category
+              }
+            }
+          }
+          createdAt
+          updatedAt
         }
       }
     }
