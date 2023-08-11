@@ -48,7 +48,7 @@ const initialState = {
   file: null,
 };
 
-const reducer = (state = initialState, action: any) => {
+const reducerFunction = (state = initialState, action: any) => {
   switch (action.type) {
     case Type.NAME:
       return {
@@ -123,20 +123,21 @@ export default function CreatePostProduct({
   categories: CategoryProps[];
 }) {
   const editorRef = React.useRef(null);
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [state, dispatch] = React.useReducer(reducerFunction, initialState);
   console.log(categories);
 
   const [mutate] = useMutation(CREATE_PRODUCT);
   const uploadFile = async () => {
     const formData = new FormData();
     formData.append("files", state.file);
-    const uploads = await API_BASE.post("/uploads", formData, {
+    const upload = await API_BASE.post("/upload", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
+    console.log(upload.data);
 
-    console.log(uploads);
+    return upload.data[0].id;
   };
   const handleSelectCategory = (event: SelectChangeEvent) => {
     dispatch({ type: Type.CATEGORY, payload: event.target.value });
@@ -151,21 +152,24 @@ export default function CreatePostProduct({
     dispatch({ type: target.name, payload: target.value });
   };
 
-  const submitPost = () => {
-    uploadFile();
-    // const variables = state;
-    // delete variables.file;
+  const submitPost = async () => {
+    const idImage = await uploadFile();
+    const variables = state;
+    delete variables.file;
+    variables.image = idImage;
 
-    // dispatch({
-    //   type: Type.DESCRIPTION,
-    //   payload: editorRef.curreNT.getContent(),
-    // });
+    dispatch({
+      type: Type.DESCRIPTION,
+      payload: editorRef.current?.getContent(),
+    });
 
-    // mutate({
-    //   variables: {
-    //     data: variables,
-    //   },
-    // });
+    console.log(variables);
+
+    mutate({
+      variables: {
+        data: variables,
+      },
+    });
   };
 
   const handleDrop = (acceptedFile: any) => {
