@@ -16,8 +16,31 @@ import {
   TextField,
   Chip,
 } from "@mui/material";
+import { formatDate } from "@/utils/date";
+import client from "@/graphql/client";
+import { GET_BLOGS } from "@/graphql/queries/blog.query";
 
-export default function list() {
+import { ListBlogProps } from "@/interfaces/listBlogs.interface";
+import { useLazyQuery, useQuery } from "@apollo/client";
+
+export default function List({ blogs }: { blogs: ListBlogProps[] }) {
+  const [blogsList, setBlogsList] = React.useState(blogs || []);
+  const [search, setSearch] = React.useState("");
+
+  const [getBlog] = useLazyQuery(GET_BLOGS, {
+    variables: {
+      filter: search,
+    },
+    onCompleted: (data) => {
+      const dataBlogs = data.blogs.data;
+      setBlogsList(dataBlogs);
+    },
+  });
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+    getBlog();
+  };
   return (
     <DashboardLayout>
       <HeaderCard
@@ -39,7 +62,11 @@ export default function list() {
 
         <Box>
           <Button className="tw-mr-4">Filter</Button>
-          <TextField placeholder="Search" size="small" />
+          <TextField
+            placeholder="Search"
+            size="small"
+            onChange={handleSearch}
+          />
         </Box>
       </Box>
       <TableContainer>
@@ -54,22 +81,44 @@ export default function list() {
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                Judul
-              </TableCell>
-              <TableCell align="right">Admin</TableCell>
-              <TableCell align="right">
-                <Chip label="Publised" />
-              </TableCell>
-              <TableCell align="right">23 October 2023</TableCell>
-              <TableCell align="right">24 October 2023</TableCell>
-            </TableRow>
+            {blogsList.map((blog, index) => (
+              <TableRow
+                key={`blog-${index}`}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {blog.attributes.title}
+                </TableCell>
+                <TableCell align="right">
+                  {blog.attributes.users_permissions_user.data?.attributes
+                    ?.username || "-"}
+                </TableCell>
+                <TableCell align="right">
+                  <Chip label="Publised" />
+                </TableCell>
+                <TableCell align="right">
+                  {formatDate(blog.attributes.createdAt)}
+                </TableCell>
+                <TableCell align="right">
+                  {formatDate(blog.attributes.updatedAt)}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
     </DashboardLayout>
   );
+}
+
+export async function getServerSideProps() {
+  const { data } = await client.query({
+    query: GET_BLOGS,
+  });
+  const blogs = data.blogs.data;
+  return {
+    props: {
+      blogs,
+    },
+  };
 }
