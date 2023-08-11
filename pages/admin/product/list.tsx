@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useLazyQuery } from "@apollo/client";
 
 import HeaderCard from "@/components/headers/HeaderCard";
 import DashboardLayout from "@/components/layouts/DasboardLayout";
@@ -15,15 +16,36 @@ import {
   Button,
   Box,
   TextField,
-  Chip,
   Pagination,
   Divider,
 } from "@mui/material";
 
-// images
-import FornitureImg from "@/assets/images/furniture.png";
+import client from "@/graphql/client";
+import { GET_PRODUCTS } from "@/graphql/queries/product.query";
 
-export default function list() {
+// images
+import { ItemProduct } from "@/interfaces/product.interface";
+import FornitureImg from "@/assets/images/furniture.png";
+import { formatDate } from "@/utils/date";
+
+export default function List({ products }: { products: ItemProduct[] }) {
+  const [productList, setProductList] = React.useState(products || []);
+  const [search, setSearch] = React.useState("");
+
+  const [getProducts] = useLazyQuery(GET_PRODUCTS, {
+    variables: {
+      filter: search,
+    },
+    onCompleted: (data) => {
+      const dataProduct = data.products.data;
+      setProductList(dataProduct);
+    },
+  });
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+    getProducts();
+  };
   return (
     <DashboardLayout>
       <HeaderCard
@@ -44,7 +66,11 @@ export default function list() {
         <p className="tw-text-gray-400">Show from 1 to 20 result</p>
         <Box>
           <Button className="tw-mr-4">Filter</Button>
-          <TextField placeholder="Search" size="small" />
+          <TextField
+            placeholder="Search"
+            size="small"
+            onChange={handleSearch}
+          />
         </Box>
       </Box>
       <TableContainer>
@@ -59,7 +85,7 @@ export default function list() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.from({ length: 8 }).map((_, index: number) => (
+            {productList.map((product: ItemProduct, index: number) => (
               <TableRow
                 key={`row-${index}`}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -72,10 +98,16 @@ export default function list() {
                     className="tw-h-36 tw-w-36 tw-object-cover"
                   />
                 </TableCell>
-                <TableCell>T200</TableCell>
-                <TableCell align="right">Table</TableCell>
-                <TableCell align="right">23 October 2023</TableCell>
-                <TableCell align="right">24 October 2023</TableCell>
+                <TableCell>{product.attributes.name}</TableCell>
+                <TableCell align="right">
+                  {product.attributes.category.data?.attributes.category || "-"}
+                </TableCell>
+                <TableCell align="right" suppressHydrationWarning>
+                  {formatDate(product.attributes.createdAt)}
+                </TableCell>
+                <TableCell align="right" suppressHydrationWarning>
+                  {formatDate(product.attributes.updatedAt)}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -87,4 +119,17 @@ export default function list() {
       </Box>
     </DashboardLayout>
   );
+}
+
+export async function getServerSideProps() {
+  const { data } = await client.query({
+    query: GET_PRODUCTS,
+  });
+  const products = data.products.data;
+
+  return {
+    props: {
+      products,
+    },
+  };
 }
