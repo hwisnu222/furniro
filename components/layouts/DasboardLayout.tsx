@@ -13,7 +13,6 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const route = React.useMemo(() => pathname.split("/")[2], [pathname]);
-  console.log(pathname.split("/"));
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: string) => {
     switch (newValue) {
