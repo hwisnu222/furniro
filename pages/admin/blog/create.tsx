@@ -2,6 +2,7 @@ import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import Dropzone from "react-dropzone";
 import Image from "next/image";
+import { useMutation } from "@apollo/client";
 import {
   TextField,
   Button,
@@ -12,13 +13,28 @@ import {
 } from "@mui/material";
 import HeaderCard from "@/components/headers/HeaderCard";
 import DashboardLayout from "@/components/layouts/DasboardLayout";
-
 import { ImageOutlined } from "@mui/icons-material";
 
-export default function CreateBlogPost() {
+import client from "@/graphql/client";
+import {
+  CREATE_POST_BLOG,
+  GET_CATEGORY_BLOG,
+} from "@/graphql/queries/blog.query";
+
+import { CategoryBlog } from "@/interfaces/listBlogs.interface";
+import { uploadMedia } from "@/services/upload";
+
+export default function CreateBlogPost({
+  categories,
+}: {
+  categories: CategoryBlog[];
+}) {
   const editorRef = React.useRef(null);
   const [category, setCategory] = React.useState("");
+  const [title, setTitle] = React.useState("");
   const [file, setFile] = React.useState<any | null>(null);
+
+  const [createPostBlog] = useMutation(CREATE_POST_BLOG);
 
   const handleSelectCategory = (event: SelectChangeEvent) => {
     setCategory(event.target.value as string);
@@ -27,6 +43,40 @@ export default function CreateBlogPost() {
   const handleDrop = (acceptedFile: any) => {
     setFile(acceptedFile[0]);
     console.log(file);
+  };
+
+  const handleSetTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+  };
+
+  const clearForm = () => {
+    setTitle("");
+    setFile(null);
+    setCategory("");
+  };
+
+  const createPost = async () => {
+    const formData = new FormData();
+    formData.append("files", file);
+    const idMedia = await uploadMedia(formData);
+
+    createPostBlog({
+      variables: {
+        data: {
+          title,
+          article: editorRef.current.getContent(),
+          category_blog: category,
+          image: idMedia,
+        },
+      },
+      onCompleted: () => {
+        alert("Post is created!");
+        clearForm(0);
+      },
+      onError: () => {
+        alert("Failed post blog!");
+      },
+    });
   };
 
   return (
@@ -38,22 +88,25 @@ export default function CreateBlogPost() {
             variant="contained"
             className="tw-bg-default-200"
             size="large"
+            onClick={createPost}
           >
             Publish
           </Button>
         }
       />
       <Box className="tw-flex tw-flex-col tw-gap-4">
-        <TextField label="Title" />
+        <TextField label="Title" onChange={handleSetTitle} value={title} />
         <Select
           value={category}
           label="Category"
           onChange={handleSelectCategory}
           className="tw-mb-8"
         >
-          <MenuItem value="ten">Ten</MenuItem>
-          <MenuItem value="twenty">Twenty</MenuItem>
-          <MenuItem value="thirty">Thirty</MenuItem>
+          {categories.map((category: CategoryBlog, index: number) => (
+            <MenuItem value={category.id} key={`category-blog-${index}`}>
+              {category.attributes.category}
+            </MenuItem>
+          ))}
         </Select>
         <Editor
           onInit={(evt, editor) => (editorRef.current = editor)}
@@ -103,4 +156,16 @@ export default function CreateBlogPost() {
       </Box>
     </DashboardLayout>
   );
+}
+
+export async function getServerSideProps() {
+  const { data } = await client.query({
+    query: GET_CATEGORY_BLOG,
+  });
+  const categories = data.categoryBlogs.data;
+  return {
+    props: {
+      categories,
+    },
+  };
 }

@@ -1,3 +1,4 @@
+`use client`;
 import React from "react";
 import { Box, Button, InputAdornment, TextField } from "@mui/material";
 import Image from "next/image";
@@ -16,7 +17,34 @@ import {
   SearchOutlined,
 } from "@mui/icons-material";
 
-export default function Blog() {
+import client from "@/graphql/client";
+import { GET_BLOGS } from "@/graphql/queries/blog.query";
+
+import { ListBlogProps } from "@/interfaces/listBlogs.interface";
+import { useLazyQuery } from "@apollo/client";
+import Link from "next/link";
+import { formatDate } from "@/utils/date";
+
+export default function Blog({ blogs }: { blogs: ListBlogProps }) {
+  const [blogsList, setBlogList] = React.useState(blogs || []);
+  const [search, setSearch] = React.useState("");
+
+  const [getBlogs] = useLazyQuery(GET_BLOGS, {
+    variables: {
+      filter: search,
+    },
+    onCompleted: (data) => {
+      setBlogList(data.blogs.data);
+    },
+  });
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
+
+  const handleGetBlogs = () => {
+    getBlogs();
+  };
   return (
     <>
       <Header />
@@ -24,12 +52,14 @@ export default function Blog() {
       <Container>
         <Box className="tw-flex tw-flex-col tw-gap-8 tw-pt-8 md:tw-flex-row">
           <div className="md:tw-w-3/4">
-            {Array.from({ length: 8 }).map((post, index) => (
+            {blogsList.map((post: ListBlogProps, index: number) => (
               <section className="tw-mb-8" key={`post-${index}`}>
                 <Image
                   src={FunitureImg}
                   alt="thumbnail-post"
                   fill={false}
+                  width={600}
+                  height={350}
                   className="object-cover ronded-md tw-h-72 tw-w-full"
                 />
                 <div className="tw-flex tw-gap-8 tw-py-2">
@@ -39,23 +69,31 @@ export default function Blog() {
                   </section>
                   <section className="tw-flex tw-items-center tw-gap-2 tw-text-gray-400">
                     <CalendarToday fontSize="small" />
-                    <span>14 Oct 2022</span>
+                    <span suppressHydrationWarning>
+                      {formatDate(post.attributes.createdAt)}
+                    </span>
                   </section>
                   <section className="tw-flex tw-items-center tw-gap-2 tw-text-gray-400">
                     <LocalOffer fontSize="small" />
-                    <span>Wood</span>
+                    <span>
+                      {post.attributes.category_blog?.data?.attributes
+                        .category || "-"}
+                    </span>
                   </section>
                 </div>
                 <div className="tw-p-2">
-                  <h3 className="te-font-bold tw-text-2xl">Title</h3>
-                  <p className="tw-mb-4 tw-text-gray-400">
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Voluptates rerum, distinctio nam voluptate perspiciatis
-                    eaque, adipisci molestiae aliquid earum aspernatur repellat
-                    quam voluptatem facere ipsa illo sint temporibus dolores at
-                    aperiam totam neque necessitatibus? Cumque!
-                  </p>
-                  <Button>Read More</Button>
+                  <h3 className="te-font-bold tw-text-2xl">
+                    {post.attributes.title}
+                  </h3>
+                  <div
+                    className="tw-mb-4 tw-text-gray-400"
+                    dangerouslySetInnerHTML={{
+                      __html: post.attributes.article.slice(0, 200),
+                    }}
+                  ></div>
+                  <Button component={Link} href={`/single-blog/${post.id}`}>
+                    Read More
+                  </Button>
                 </div>
               </section>
             ))}
@@ -65,11 +103,12 @@ export default function Blog() {
               className="tw-mb-8 tw-w-full"
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position="end">
+                  <InputAdornment position="end" onClick={handleGetBlogs}>
                     <SearchOutlined />
                   </InputAdornment>
                 ),
               }}
+              onChange={handleSearch}
             />
             <div className="tw-p-4">
               <h3 className="tw-text-2xl tw-font-bold">Categories</h3>
@@ -107,4 +146,14 @@ export default function Blog() {
       <Footer />
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const { data } = await client.query({ query: GET_BLOGS });
+  const blogs = data.blogs.data;
+  return {
+    props: {
+      blogs,
+    },
+  };
 }

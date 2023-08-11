@@ -11,6 +11,13 @@ export interface ListBlogProps {
         };
       };
     };
+    category_blog?: {
+      data: {
+        attributes: {
+          category: string;
+        };
+      };
+    };
     users_permissions_user: {
       data: {
         id: number;
@@ -21,5 +28,12 @@ export interface ListBlogProps {
     };
     createdAt: string;
     updatedAt: string;
+  };
+}
+
+export interface CategoryBlog {
+  id: number;
+  attributes: {
+    category: string;
   };
 }
