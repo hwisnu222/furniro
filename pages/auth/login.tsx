@@ -36,14 +36,13 @@ export default function Login() {
     await signIn("credentials", {
       username: form.email,
       password: form.password,
-      callbackUrl: "/admin/list",
+      callbackUrl: "/admin/product/list",
     });
   };
   return (
     <AuthLayout>
       <Box className="tw-flex tw-flex-col  tw-gap-4">
         <Box>
-          {" "}
           <Typography variant="h5">Login</Typography>
           <p className="tw-text-gray-400">Please enter your credentials</p>
         </Box>

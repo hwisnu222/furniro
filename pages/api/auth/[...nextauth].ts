@@ -3,6 +3,7 @@ import client from "@/graphql/client";
 import { LOGIN } from "@/graphql/mutations/authentication.mutation";
 import NextAuth, { Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
+import { API_BASE } from "@/config/api";
 
 export default NextAuth({
   providers: [
@@ -10,26 +11,28 @@ export default NextAuth({
       name: "credentials",
       async authorize(credentials: any) {
         // TODO: create logic login
-        const { data } = await client.query({
-          query: LOGIN,
-          variables: {
+        try {
+          const { data: login } = await API_BASE.post("/auth/local", {
             identifier: credentials.username,
             password: credentials.password,
-          },
-        });
-        console.log(data);
+          });
 
-        if (!data) {
+          if (!login) {
+            return null;
+          }
+
+          return {
+            id: login.user.id,
+            username: login.user.username,
+            email: login.user.email,
+            token: login.jwt,
+          };
+
+          return {};
+        } catch (error) {
+          console.log(error);
           return null;
         }
-
-        const login = data.login;
-        return {
-          id: login.user.id,
-          username: login.user.username,
-          email: login.user.email,
-          token: login.jwt,
-        };
       },
       credentials: {
         username: { label: "username", type: "text" },
