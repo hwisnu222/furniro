@@ -11,16 +11,20 @@ import { convertCurrency } from "@/utils/currency";
 import { ItemProduct, ProductProps } from "@/interfaces/product.interface";
 import { ADD_CART } from "@/graphql/mutations/cart.mutation";
 import { CREATE_WISHLIST } from "@/graphql/mutations/wishlist.mutation";
+import { useSession } from "next-auth/react";
 
 export default function Products({ data }: ProductProps) {
+  const session = useSession();
   const [addCart] = useMutation(ADD_CART);
   const [addWishlist] = useMutation(CREATE_WISHLIST);
 
   const handleAddWishlist = (id: number) => {
+    const idUser = session?.data?.id;
     addWishlist({
       variables: {
         data: {
           product: id,
+          users_permissions_user: idUser,
         },
       },
       onCompleted: () => {
