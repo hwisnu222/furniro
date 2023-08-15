@@ -1,10 +1,10 @@
-import { StaticImageData } from "next/image";
+import { ImageItem } from "./image.interface";
 
 export interface ItemProduct {
   id: number;
   attributes: {
     name: string;
-    image: { data: { id: number; attributes: { url: string } } };
+    image: ImageItem;
     summary: string;
     description: string;
     category: {
@@ -20,7 +20,10 @@ export interface ItemProduct {
     color?: string[] | null;
     size?: string[] | null;
     tag?: string[] | null;
+    sku: string;
+    rating: number;
     stock: number;
+    review: any;
     createdAt: string;
     updatedAt: string;
   };
