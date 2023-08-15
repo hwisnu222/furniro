@@ -15,7 +15,7 @@ import {
   Tabs,
   Tab,
 } from "@mui/material";
-import Image from "next/image";
+import Image from "@/components/images/Image";
 import { AddOutlined } from "@mui/icons-material";
 
 import { GET_PRODUCT, GET_PRODUCTS } from "@/graphql/queries/product.query";
@@ -38,20 +38,6 @@ const DescriptionPanel = ({ description }: { description: string }) => {
         className="tw-text-gray-400"
         dangerouslySetInnerHTML={{ __html: description }}
       ></p>
-      <Box className="tw-grid tw-w-full tw-grid-cols-1 tw-gap-4  md:tw-grid-cols-2">
-        <Image
-          src={FurnitureImg}
-          alt="description-product"
-          fill={false}
-          className="object-cover tw-h-52 tw-w-full"
-        />
-        <Image
-          src={FurnitureImg}
-          alt="description-product"
-          fill={false}
-          className="object-cover tw-h-52 tw-w-full"
-        />
-      </Box>
     </Container>
   );
 };
@@ -129,23 +115,22 @@ export default function SingleProduct({
       <div className="tw-container tw-mx-auto tw-mb-8 tw-grid tw-grid-cols-1 tw-gap-4 tw-px-8 md:tw-grid-cols-2 md:tw-gap-20">
         <div className="tw-flex tw-gap-6">
           <Stack direction="column" gap={3}>
-            {Array.from({ length: 3 }).map((_, index: number) => (
-              <Image
-                key={`variant-${index}`}
-                src={
-                  process.env.NEXT_PUBLIC_MEDIA +
-                  product?.attributes.image?.data?.attributes?.url
-                }
-                alt="furniture"
-                width={100}
-                height={100}
-                className="tw-w-52"
-                fill={false}
-              />
-            ))}
+            {product?.attributes.image?.data.map(
+              (image: any, index: number) => (
+                <Image
+                  key={`variant-${index}`}
+                  src={image.attributes?.url}
+                  alt="furniture"
+                  width={100}
+                  height={100}
+                  className="tw-w-52"
+                  fill={false}
+                />
+              ),
+            )}
           </Stack>
           <Image
-            src={FurnitureImg}
+            src={product?.attributes.image?.data[0]?.attributes?.url}
             alt="furniture"
             className="tw-flex-4 tw-h-3/4 tw-w-full tw-object-cover"
             fill={false}
@@ -302,6 +287,7 @@ export async function getServerSideProps(ctx: any) {
   });
   const product = data?.products?.data[0];
   const products = dataProducts?.products?.data.slice(0, 8);
+  console.log(product.attributes.image.data);
   return {
     props: {
       product,

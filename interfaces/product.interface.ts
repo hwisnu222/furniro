@@ -1,11 +1,11 @@
-import { ImageItem } from "./image.interface";
+import { ImageItems } from "./image.interface";
 
 export interface ItemProduct {
   id: number;
   attributes: {
     slug: string;
     name: string;
-    image: ImageItem;
+    image: ImageItems;
     summary: string;
     description: string;
     category: {

@@ -97,7 +97,7 @@ export default function Products({ data }: ProductProps) {
           <Image
             src={
               process.env.NEXT_PUBLIC_MEDIA +
-              item.attributes.image?.data?.attributes.url
+              item.attributes.image?.data[0].attributes.url
             }
             alt="products"
             fill={false}

@@ -129,16 +129,21 @@ export default function CreatePostProduct({
 
   const [mutate] = useMutation(CREATE_PRODUCT);
   const uploadFile = async () => {
-    const formData = new FormData();
-    formData.append("files", state.file);
-    const upload = await API_BASE.post("/upload", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    return await Promise.all(
+      state.file.map(async (image: any) => {
+        const formData = new FormData();
+        formData.append("files", image);
+        const upload = await API_BASE.post("/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
-    return upload.data[0].id;
+        return upload.data[0].id;
+      }),
+    );
   };
+
   const handleSelectCategory = (event: SelectChangeEvent) => {
     dispatch({ type: Type.CATEGORY, payload: event.target.value });
   };
@@ -153,10 +158,11 @@ export default function CreatePostProduct({
   };
 
   const submitPost = async () => {
-    const idImage = await uploadFile();
+    const idImages = await uploadFile();
+    console.log(idImages);
     const variables = state;
     delete variables.file;
-    variables.image = idImage;
+    variables.image = idImages;
     variables.slug = slugger(variables.name);
 
     dispatch({
@@ -178,7 +184,7 @@ export default function CreatePostProduct({
   };
 
   const handleDrop = (acceptedFile: any) => {
-    dispatch({ type: Type.FILE, payload: acceptedFile[0] });
+    dispatch({ type: Type.FILE, payload: acceptedFile });
   };
 
   return (
@@ -255,21 +261,24 @@ export default function CreatePostProduct({
                 className="tw-rounded-md tw-border tw-border-dashed tw-p-12"
                 {...getRootProps()}
               >
-                <input {...getInputProps()} />
+                <input {...getInputProps()} multiple />
                 <Box className="tw-flex tw-cursor-pointer tw-flex-col tw-items-center tw-justify-center tw-gap-3 md:tw-flex-row ">
-                  {state.file ? (
-                    <Image
-                      src={URL.createObjectURL(state.file)}
-                      alt="file-image"
-                      fill={false}
-                      width={100}
-                      height={100}
-                      className="tw-h-24 tw-w-24 tw-object-cover"
-                    />
+                  {state.file?.length ? (
+                    state.file.map((image: any, index: number) => (
+                      <Image
+                        key={`upload-${index}`}
+                        src={URL.createObjectURL(image)}
+                        alt="file-image"
+                        fill={false}
+                        width={100}
+                        height={100}
+                        className="tw-h-24 tw-w-24 tw-object-cover"
+                      />
+                    ))
                   ) : (
                     <ImageOutlined />
                   )}
-                  <p>{state.file?.name || `Drag your file here`}</p>
+                  <p>{"Images is Uploaded" || `Drag your file here`}</p>
                 </Box>
               </Box>
             )}
