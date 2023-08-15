@@ -205,17 +205,17 @@ export default function Header() {
             <Divider className="tw-mb-4" />
 
             {carts?.map((cart: CartItem, index: number) => (
-              <div className="tw-flex tw-gap-8" key={`cart-${index}`}>
+              <div className="tw-flex tw-gap-4" key={`cart-${index}`}>
                 <Image
                   src={FunirtureImg}
                   alt="cart-shop"
                   fill={false}
                   className="tw-h-20 tw-w-20 tw-rounded-md"
                 />
-                <div className="tw-flex tw-items-center tw-gap-4">
+                <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
                   <div>
                     <h3>{cart.attributes.product?.data?.attributes.name}</h3>
-                    <p className="tw-text-sm">
+                    <p className="tw-text-xs">
                       {cart.attributes.total} x{" "}
                       <span className="tw-ml-2 tw-text-default-200">
                         {convertCurrency(
