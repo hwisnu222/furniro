@@ -21,11 +21,17 @@ export default NextAuth({
             return null;
           }
 
+          const { data: user } = await API_BASE.get(
+            `/users/${login.user.id}?populate=role`,
+          );
+          console.log({ user });
+
           return {
             id: login.user.id,
             username: login.user.username,
             email: login.user.email,
             token: login.jwt,
+            role: user.role.name,
           };
 
           return {};
@@ -59,6 +65,7 @@ export default NextAuth({
       user: User;
       token: JWT;
     }) => {
+      session = Object.assign(session, token);
       return Promise.resolve(session);
     },
   },
