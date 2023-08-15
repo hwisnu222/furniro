@@ -105,13 +105,13 @@ export default function Index({ products }: { products: ItemProduct[] }) {
               <Image
                 src={
                   process.env.NEXT_PUBLIC_MEDIA +
-                  product.attributes.image?.data?.attributes.url
+                  product.attributes.image?.data[0]?.attributes.url
                 }
                 alt="thumbnail"
                 width={500}
                 height={200}
                 fill={false}
-                className="tw-mb-4 md:tw-mx-4"
+                className="tw-mb-4 tw-h-72 md:tw-mx-4"
               />
               <p className="tw-font-bold">{product.attributes.name}</p>
             </div>
@@ -129,13 +129,13 @@ export default function Index({ products }: { products: ItemProduct[] }) {
               <Image
                 src={
                   (process.env.NEXT_PUBLIC_MEDIA +
-                    item.attributes.image?.data?.attributes.url) as string
+                    item.attributes.image?.data[0]?.attributes.url) as string
                 }
                 width={200}
                 height={200}
                 alt="products"
                 fill={false}
-                className="tw-w-full"
+                className="tw-h-72 tw-w-full"
               />
               <div className="tw-p-4">
                 <h3 className="tw-font-bold">{item.attributes.name}</h3>
