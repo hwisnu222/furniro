@@ -5,6 +5,7 @@ import Image from "next/image";
 import Logo from "@/assets/images/logo-furniro.png";
 
 import { Avatar, IconButton, Menu, MenuItem } from "@mui/material";
+import { signOut } from "next-auth/react";
 
 export default function HeaderAdmin() {
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
@@ -14,6 +15,12 @@ export default function HeaderAdmin() {
   };
   const handleCloseMenu = () => {
     setAnchor(null);
+  };
+
+  const handleSignOut = () => {
+    signOut({
+      callbackUrl: "/auth/login",
+    });
   };
   return (
     <div>
@@ -37,7 +44,7 @@ export default function HeaderAdmin() {
         >
           <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
           <MenuItem onClick={handleCloseMenu}>My account</MenuItem>
-          <MenuItem onClick={handleCloseMenu}>Logout</MenuItem>
+          <MenuItem onClick={handleSignOut}>Logout</MenuItem>
         </Menu>
       </div>
     </div>
