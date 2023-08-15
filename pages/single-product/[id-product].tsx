@@ -1,9 +1,7 @@
-"use client";
-
 import React from "react";
-import { useRouter } from "next/router";
-import { useQuery } from "@apollo/client";
 import client from "@/graphql/client";
+import { useMutation } from "@apollo/client";
+
 import {
   Breadcrumbs,
   Link,
@@ -30,8 +28,8 @@ import Container from "@/components/layouts/Container";
 
 import FurnitureImg from "../../assets/images/furniture.png";
 import { convertCurrency } from "@/utils/currency";
-
-import { ItemProduct } from "@/interfaces/product.interface";
+import { ADD_CART } from "@/graphql/mutations/cart.mutation";
+import { ItemProduct, ProductProps } from "@/interfaces/product.interface";
 
 const DescriptionPanel = ({ description }: { description: string }) => {
   return (
@@ -75,14 +73,33 @@ export default function SingleProduct({
   product,
   products,
 }: {
-  product: any;
-  products: any;
+  product: ItemProduct;
+  products: ItemProduct[];
 }) {
   const [tab, setTab] = React.useState("description");
   const [buyTotal, setBuyTotal] = React.useState(0);
 
+  const [addCart] = useMutation(ADD_CART);
+
+  const handleAddCart = (id: number) => {
+    addCart({
+      variables: {
+        data: {
+          total: buyTotal,
+          product: id,
+        },
+      },
+      onCompleted: () => {
+        alert("Product has added to cart");
+      },
+      onError: () => {
+        alert("failed add product to cart");
+      },
+    });
+  };
+
   const handleTotalProduct = (action: string) => {
-    if (action === "increase" && buyTotal <= product?.stock) {
+    if (action === "increase" && buyTotal <= product?.attributes.stock) {
       return setBuyTotal((prev: number) => prev + 1);
     }
     if (action === "decrease" && buyTotal > LIMIT_BUY) {
@@ -105,7 +122,7 @@ export default function SingleProduct({
             Shop
           </Link>
           <Link underline="hover" color="inherit">
-            {product?.name}
+            {product?.attributes.name}
           </Link>
         </Breadcrumbs>
       </div>
@@ -117,7 +134,7 @@ export default function SingleProduct({
                 key={`variant-${index}`}
                 src={
                   process.env.NEXT_PUBLIC_MEDIA +
-                  product?.image?.data?.attributes?.url
+                  product?.attributes.image?.data?.attributes?.url
                 }
                 alt="furniture"
                 width={100}
@@ -135,49 +152,53 @@ export default function SingleProduct({
           />
         </div>
         <Box gap={6} className="tw-w-full">
-          <h3 className="tw-text-4xl">{product?.name}</h3>
+          <h3 className="tw-text-4xl">{product?.attributes.name}</h3>
           <p className="tw-text-xl tw-font-semibold tw-text-gray-300">
-            {convertCurrency(product?.price)}
+            {convertCurrency(product?.attributes.price)}
           </p>
           <Stack direction="row" alignItems="center">
-            <Rating value={product.rating} />
+            <Rating value={product.attributes.rating} />
             <Divider orientation="vertical" className="tw-mx-2 tw-my-6" />
             <span className="tw-text-sm tw-text-gray-300">
               5 Customer Review
             </span>
           </Stack>
-          <p className="tw-mb-8">{product?.summary}</p>
+          <p className="tw-mb-8">{product?.attributes.summary}</p>
 
-          {product?.size?.length && (
+          {product?.attributes.size?.length && (
             <>
               <h3 className="tw-mb-2 tw-font-semibold tw-text-gray-400">
                 Size
               </h3>
               <div className="tw-mb-8 tw-flex tw-gap-2">
-                {product?.size?.map((size: string, index: number) => (
-                  <span
-                    className="tw-flex tw-h-10 tw-w-10 tw-cursor-pointer tw-items-center tw-justify-center tw-rounded-md tw-bg-default-100 hover:tw-bg-default-200 hover:tw-text-white"
-                    key={`size-${index}`}
-                  >
-                    {size}
-                  </span>
-                ))}
+                {product?.attributes.size?.map(
+                  (size: string, index: number) => (
+                    <span
+                      className="tw-flex tw-h-10 tw-w-10 tw-cursor-pointer tw-items-center tw-justify-center tw-rounded-md tw-bg-default-100 hover:tw-bg-default-200 hover:tw-text-white"
+                      key={`size-${index}`}
+                    >
+                      {size}
+                    </span>
+                  ),
+                )}
               </div>
             </>
           )}
 
-          {product?.color?.length && (
+          {product?.attributes.color?.length && (
             <>
               <h3 className="tw-mb-2 tw-font-semibold tw-text-gray-400">
                 Color
               </h3>
               <div className="tw-flex tw-gap-2">
-                {product?.color.map((color: string, index: number) => (
-                  <span
-                    className={`tw-h-6 tw-w-6 tw-cursor-pointer tw-rounded-full tw-border-2 tw-border-transparent tw-bg-[${color}] hover:tw-border-gray-200`}
-                    key={`color-${index}`}
-                  ></span>
-                ))}
+                {product?.attributes.color.map(
+                  (color: string, index: number) => (
+                    <span
+                      className={`tw-h-6 tw-w-6 tw-cursor-pointer tw-rounded-full tw-border-2 tw-border-transparent tw-bg-[${color}] hover:tw-border-gray-200`}
+                      key={`color-${index}`}
+                    ></span>
+                  ),
+                )}
               </div>
             </>
           )}
@@ -196,7 +217,12 @@ export default function SingleProduct({
                 <AddOutlined />
               </IconButton>
             </Stack>
-            <Button variant="outlined">Add to Cart</Button>
+            <Button
+              variant="outlined"
+              onClick={() => handleAddCart(product.id)}
+            >
+              Add to Cart
+            </Button>
             <Button variant="outlined">Compare</Button>
           </div>
 
@@ -206,20 +232,24 @@ export default function SingleProduct({
             <tbody>
               <tr>
                 <td className="tw-py-2 tw-pr-4">SKU</td>
-                <td>: {product?.sku || "-"}</td>
+                <td>: {product?.attributes.sku || "-"}</td>
               </tr>
               <tr>
                 <td className="tw-py-2 tw-pr-4">Category</td>
-                <td>: {product?.category.data?.attributes.category}</td>
+                <td>
+                  : {product?.attributes.category?.data?.attributes.category}
+                </td>
               </tr>
               <tr>
                 <td className="tw-py-2 tw-pr-4">Tags</td>
                 <td>
                   :
-                  {product?.tag
-                    ? product?.tag.map((tag: string, index: number) => (
-                        <span key={`tag-${index}`}>{tag}, </span>
-                      ))
+                  {product?.attributes.tag
+                    ? product?.attributes.tag.map(
+                        (tag: string, index: number) => (
+                          <span key={`tag-${index}`}>{tag}, </span>
+                        ),
+                      )
                     : "-"}
                 </td>
               </tr>
@@ -245,7 +275,7 @@ export default function SingleProduct({
           <Tab value="additional" label="Additional Informations" />
           <Tab
             value="review"
-            label={`Reviews (${product.review?.length || 0})`}
+            label={`Reviews (${product.attributes.review?.length || 0})`}
           />
         </Tabs>
         {TabPannel(tab, product)}
@@ -260,7 +290,6 @@ export default function SingleProduct({
 }
 
 export async function getServerSideProps(ctx: any) {
-  console.log(ctx);
   const idProduct = ctx.params["id-product"];
   const { data } = await client.query({
     query: GET_PRODUCT,
@@ -271,7 +300,8 @@ export async function getServerSideProps(ctx: any) {
   const { data: dataProducts } = await client.query({
     query: GET_PRODUCTS,
   });
-  const product = data?.products?.data[0].attributes;
+  const product = data?.products?.data[0];
+  console.log(product);
   const products = dataProducts?.products?.data.slice(0, 8);
   return {
     props: {

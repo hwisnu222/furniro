@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import {
   IconButton,
@@ -12,6 +13,8 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import {
   SearchOutlined,
@@ -19,21 +22,50 @@ import {
   HighlightOffOutlined,
   Menu,
   LocalMall,
-  Info,
   Call,
   Home,
   Person,
   Favorite,
   ShoppingCart,
+  PermIdentityOutlined,
+  FavoriteOutlined,
+  ShoppingCartOutlined,
+  Close,
 } from "@mui/icons-material";
 
 // images
 import Logo from "@/assets/images/logo-furniro.png";
 import FunirtureImg from "@/assets/images/furniture.png";
+import { GET_CARTS } from "@/graphql/queries/cart.query";
+import { CartItem } from "@/interfaces/cart.interface";
+import { useMutation, useQuery } from "@apollo/client";
+import { convertCurrency } from "@/utils/currency";
+import { DELETE_CART } from "@/graphql/mutations/cart.mutation";
+import { getTotalPrice } from "@/utils/cart/getTotalCart";
+import { useSearchParams } from "next/navigation";
 
 export default function Header() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [drawer, setDrawer] = React.useState<boolean>(false);
   const [menuMobile, setMenuMobile] = React.useState<boolean>(false);
+  const [showSearch, setShowSearch] = React.useState(false);
+  const [search, setSearch] = React.useState("");
+
+  const [deleteCart] = useMutation(DELETE_CART, {
+    onCompleted: () => {
+      alert("Cart is delete");
+      refetch();
+    },
+    onError: () => {
+      alert("failed delete cart");
+    },
+  });
+
+  const { data, refetch } = useQuery(GET_CARTS, {
+    fetchPolicy: "cache-and-network",
+  });
+  const carts = data?.carts.data;
 
   const handleDrawer = () => {
     setDrawer((prev: boolean) => !prev);
@@ -41,6 +73,35 @@ export default function Header() {
 
   const handleMenuMobile = () => {
     setMenuMobile((prev: boolean) => !prev);
+  };
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    router.replace(`/shop?search=${search}`);
+    setSearch(event.target.value as string);
+  };
+
+  const resetSearchParams = () => {
+    setSearch("");
+    router.replace("/shop");
+    handleShowSearch();
+  };
+
+  const handleShowSearch = () => {
+    setShowSearch((prev: boolean) => !prev);
+  };
+
+  const handleEnterSearch = (event: React.KeyboardEvent) => {
+    if (event.code === "Enter") {
+      handleShowSearch();
+    }
+  };
+
+  const handleDeleteCart = (id: number) => {
+    deleteCart({
+      variables: {
+        id,
+      },
+    });
   };
 
   return (
@@ -62,19 +123,45 @@ export default function Header() {
             <Link href="/contact">Contact</Link>
           </li>
         </ul>
-        {/* <ul className="tw-flex tw-gap-4">
+        <ul className="tw-flex tw-gap-4">
+          <Link href="/user/transaction">
+            <li>
+              <IconButton>
+                <PermIdentityOutlined />
+              </IconButton>
+            </li>
+          </Link>
+
           <li>
-            <IconButton>
-              <PermIdentityOutlined />
-            </IconButton>
+            {showSearch ? (
+              <TextField
+                size="small"
+                className="tw-w-full"
+                autoFocus
+                onChange={handleSearch}
+                onKeyDown={handleEnterSearch}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {searchParams.get("search") ? (
+                        <IconButton onClick={resetSearchParams}>
+                          <Close className="tw-cursor-pointer" />
+                        </IconButton>
+                      ) : (
+                        <SearchOutlined className="tw-cursor-pointer" />
+                      )}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            ) : (
+              <IconButton onClick={handleShowSearch}>
+                <SearchOutlined />
+              </IconButton>
+            )}
           </li>
           <li>
-            <IconButton>
-              <SearchOutlined />
-            </IconButton>
-          </li>
-          <li>
-            <IconButton>
+            <IconButton component={Link} href="/user/wishlist">
               <FavoriteOutlined />
             </IconButton>
           </li>
@@ -83,8 +170,8 @@ export default function Header() {
               <ShoppingCartOutlined />
             </IconButton>
           </li>
-        </ul> */}
-        <Stack gap={2} direction="row">
+        </ul>
+        {/* <Stack gap={2} direction="row">
           <Button
             variant="contained"
             className="tw-bg-default-200"
@@ -102,7 +189,7 @@ export default function Header() {
           >
             Register
           </Button>
-        </Stack>
+        </Stack> */}
       </div>
 
       {/* drawer */}
@@ -117,33 +204,43 @@ export default function Header() {
             </div>
             <Divider className="tw-mb-4" />
 
-            <div className="tw-flex tw-gap-8">
-              <Image
-                src={FunirtureImg}
-                alt="cart-shop"
-                fill={false}
-                className="tw-h-20 tw-w-20 tw-rounded-md"
-              />
-              <div className="tw-flex tw-items-center tw-gap-4">
-                <div>
-                  <h3>furniture Product</h3>
-                  <p className="tw-text-sm">
-                    1 x{" "}
-                    <span className="tw-ml-2 tw-text-default-200">
-                      Rp.25.000.000
-                    </span>
-                  </p>
+            {carts?.map((cart: CartItem, index: number) => (
+              <div className="tw-flex tw-gap-8" key={`cart-${index}`}>
+                <Image
+                  src={FunirtureImg}
+                  alt="cart-shop"
+                  fill={false}
+                  className="tw-h-20 tw-w-20 tw-rounded-md"
+                />
+                <div className="tw-flex tw-items-center tw-gap-4">
+                  <div>
+                    <h3>{cart.attributes.product?.data?.attributes.name}</h3>
+                    <p className="tw-text-sm">
+                      {cart.attributes.total} x{" "}
+                      <span className="tw-ml-2 tw-text-default-200">
+                        {convertCurrency(
+                          cart.attributes.total *
+                            cart.attributes.product?.data?.attributes.price,
+                        )}
+                      </span>
+                    </p>
+                  </div>
+                  <IconButton>
+                    <HighlightOffOutlined
+                      onClick={() => handleDeleteCart(cart.id)}
+                    />
+                  </IconButton>
                 </div>
-                <IconButton>
-                  <HighlightOffOutlined />
-                </IconButton>
               </div>
-            </div>
+            ))}
           </div>
+
           <div className="tw-mt-auto">
             <div className="tw-mb-4 tw-flex tw-items-center tw-justify-between">
               <p>Subtotal</p>
-              <p className="tw-font-bold tw-text-default-200">Rp 25.000.000</p>
+              <p className="tw-font-bold tw-text-default-200">
+                {convertCurrency(getTotalPrice(carts))}
+              </p>
             </div>
             <Stack direction="row" justifyContent="space-between">
               <Button
@@ -219,7 +316,7 @@ export default function Header() {
               Account
             </h3>
 
-            <ListItemButton component={Link} href="/contact">
+            <ListItemButton component={Link} href="/user/transaction">
               <ListItemIcon>
                 <Person />
               </ListItemIcon>
@@ -231,7 +328,7 @@ export default function Header() {
               </ListItemIcon>
               <ListItemText primary="Search" />
             </ListItemButton>
-            <ListItemButton component={Link} href="/wishlist">
+            <ListItemButton component={Link} href="/user/wishlist">
               <ListItemIcon>
                 <Favorite />
               </ListItemIcon>

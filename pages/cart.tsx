@@ -23,8 +23,35 @@ import Container from "@/components/layouts/Container";
 import FurnitureImg from "@/assets/images/furniture.png";
 
 import { convertCurrency } from "@/utils/currency";
+import { CartItem } from "@/interfaces/cart.interface";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_CARTS } from "@/graphql/queries/cart.query";
+import { DELETE_CART } from "@/graphql/mutations/cart.mutation";
+import { getTotalPrice } from "@/utils/cart/getTotalCart";
 
 export default function Cart() {
+  const [deleteCart] = useMutation(DELETE_CART, {
+    onCompleted: () => {
+      alert("Cart is delete");
+      refetch();
+    },
+    onError: () => {
+      alert("failed delete cart");
+    },
+  });
+
+  const { data, refetch } = useQuery(GET_CARTS, {
+    fetchPolicy: "cache-and-network",
+  });
+  const carts = data?.carts.data;
+
+  const handleDeleteCart = (id: number) => {
+    deleteCart({
+      variables: {
+        id,
+      },
+    });
+  };
   return (
     <>
       <Header />
@@ -44,39 +71,45 @@ export default function Cart() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell align="right" className="tw-text-gray-400">
-                    <Image
-                      src={FurnitureImg}
-                      alt="thumbnail-cart"
-                      fill={false}
-                      className="tw-h-24 tw-w-24 tw-rounded-md"
-                    />
-                  </TableCell>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    className="tw-text-gray-400"
+                {carts?.map((cart: CartItem, index: number) => (
+                  <TableRow
+                    key={`cart-${index}`}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
-                    name
-                  </TableCell>
-                  <TableCell align="right" className="tw-text-gray-400">
-                    {convertCurrency(25000000)}
-                  </TableCell>
-                  <TableCell className="tw-text-right">
-                    <p className="tw-inline-block tw-h-8 tw-w-8 tw-rounded-sm tw-border tw-text-center tw-align-middle ">
-                      3
-                    </p>
-                  </TableCell>
-                  <TableCell align="right">4</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <Delete className="tw-text-default-200" />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
+                    <TableCell align="right" className="tw-text-gray-400">
+                      <Image
+                        src={FurnitureImg}
+                        alt="thumbnail-cart"
+                        fill={false}
+                        className="tw-h-24 tw-w-24 tw-rounded-md"
+                      />
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      className="tw-text-gray-400"
+                    >
+                      {cart.attributes.product?.data?.attributes.name}
+                    </TableCell>
+                    <TableCell align="right" className="tw-text-gray-400">
+                      {convertCurrency(
+                        cart.attributes.total *
+                          cart.attributes.product?.data?.attributes.price,
+                      )}
+                    </TableCell>
+                    <TableCell className="tw-text-right">
+                      <p className="tw-inline-block tw-h-8 tw-w-8 tw-rounded-sm tw-border tw-text-center tw-align-middle ">
+                        {cart.attributes.total}
+                      </p>
+                    </TableCell>
+                    <TableCell align="right">4</TableCell>
+                    <TableCell align="right">
+                      <IconButton onClick={() => handleDeleteCart(cart.id)}>
+                        <Delete className="tw-text-default-200" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
@@ -90,7 +123,9 @@ export default function Cart() {
             </div>
             <div className="tw-grid tw-grid-cols-2">
               <span>Total</span>
-              <span className="tw-whitespace-nowrap">Rp 25.000.000</span>
+              <span className="tw-whitespace-nowrap">
+                {convertCurrency(getTotalPrice(carts))}
+              </span>
             </div>
           </Box>
           <Button variant="outlined" className="tw-w-full">
