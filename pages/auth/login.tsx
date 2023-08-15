@@ -10,12 +10,34 @@ import Link from "next/link";
 
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import AuthLayout from "@/components/layouts/AuthLayout";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
+  const [form, setForm] = React.useState({
+    email: "",
+    password: "",
+  });
   const [visiblePassword, setVisiblePassword] = React.useState<boolean>(false);
+
+  const handleChangeForm = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const target = event.target;
+    setForm({
+      ...form,
+      [target.name]: target.value,
+    });
+  };
 
   const handleVisiblePassword = () => {
     setVisiblePassword((prev: boolean) => !prev);
+  };
+
+  const handleSubmit = async () => {
+    console.log(form);
+    await signIn("credentials", {
+      username: form.email,
+      password: form.password,
+      callbackUrl: "/admin/list",
+    });
   };
   return (
     <AuthLayout>
@@ -25,11 +47,18 @@ export default function Login() {
           <Typography variant="h5">Login</Typography>
           <p className="tw-text-gray-400">Please enter your credentials</p>
         </Box>
-        <TextField label="Email" type="email" />
         <TextField
+          name="email"
+          label="Email"
+          type="email"
+          onChange={handleChangeForm}
+        />
+        <TextField
+          name="password"
           label="Password"
           className="tw-mb-8"
           type={visiblePassword ? "text" : "password"}
+          onChange={handleChangeForm}
           InputProps={{
             endAdornment: (
               <InputAdornment
@@ -46,6 +75,7 @@ export default function Login() {
           size="large"
           variant="contained"
           className="tw-block tw-w-full tw-bg-default-200"
+          onClick={handleSubmit}
         >
           Login
         </Button>
