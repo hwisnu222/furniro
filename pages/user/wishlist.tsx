@@ -10,9 +10,9 @@ import {
   TableBody,
   TableCell,
   IconButton,
-  Typography,
 } from "@mui/material";
 import { useQuery, useMutation } from "@apollo/client";
+import { enqueueSnackbar } from "notistack";
 
 import { WishListItem } from "@/interfaces/wishlist.interface";
 import Image from "@/components/images/Image";
@@ -29,11 +29,11 @@ export default function Wishlist() {
 
   const [deleteWishlist] = useMutation(DELETE_WISHLIST, {
     onCompleted: () => {
-      alert("Wishlist is deleted!");
+      enqueueSnackbar("Wishlist is deleted!", { variant: "success" });
       refetch();
     },
     onError: () => {
-      alert("failed delete wishlist!");
+      enqueueSnackbar("failed delete wishlist!", { variant: "error" });
     },
   });
 

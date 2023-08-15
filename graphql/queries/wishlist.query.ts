@@ -11,8 +11,8 @@ export const ADD_LIKE = gql`
 `;
 
 export const GET_WISHLISTS = gql`
-  query getWishlist {
-    wishlists {
+  query getWishlist($id: String) {
+    wishlists(filters: { users_permissions_user: { id: $id } }) {
       data {
         id
         attributes {
@@ -20,6 +20,7 @@ export const GET_WISHLISTS = gql`
             data {
               id
               attributes {
+                slug
                 name
                 image {
                   data {
