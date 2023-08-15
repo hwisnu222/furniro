@@ -1,15 +1,13 @@
+import { ItemProduct } from "./product.interface";
+
 export interface TransactionItem {
   id: number;
   attributes: {
     total: number;
-    products: {
-      data: {
-        id: number;
-        attributes: {
-          name: string;
-          price: string;
-        };
-      };
+    product: {
+      data: ItemProduct;
     };
+    createdAt?: string;
+    updatedAt?: string;
   };
 }

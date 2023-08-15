@@ -1,21 +1,35 @@
 import { gql } from "@apollo/client";
 
 export const GET_TRANSACTIONS = gql`
-  query getTransactions {
-    transactions {
+  query getTransaction($filters: TransactionFiltersInput) {
+    transactions(filters: $filters) {
       data {
         id
         attributes {
           total
-          products {
+          product {
             data {
               id
               attributes {
                 name
-                price
+                image {
+                  data {
+                    attributes {
+                      url
+                    }
+                  }
+                }
               }
             }
           }
+        }
+      }
+      meta {
+        pagination {
+          total
+          page
+          pageSize
+          pageCount
         }
       }
     }

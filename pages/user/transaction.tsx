@@ -10,8 +10,27 @@ import {
   TableBody,
   TableCell,
 } from "@mui/material";
+import { useQuery } from "@apollo/client";
+import { GET_TRANSACTIONS } from "@/graphql/queries/transaction.query";
+import { useSession } from "next-auth/react";
+import { TransactionItem } from "@/interfaces/transaction.interface";
+import { formatDate } from "@/utils/date";
+import Image from "@/components/images/Image";
 
 export default function Transaction() {
+  const session = useSession();
+  console.log(session);
+  const { data } = useQuery(GET_TRANSACTIONS, {
+    variables: {
+      users_permissions_user: {
+        id: {
+          eq: session?.data?.id,
+        },
+      },
+    },
+  });
+
+  console.log(data);
   return (
     <DashboardUserLayout>
       <HeaderCard title="Transactions" />
@@ -21,26 +40,47 @@ export default function Transaction() {
             <TableRow>
               <TableCell></TableCell>
               <TableCell>Product</TableCell>
-              <TableCell align="right">Category</TableCell>
+              <TableCell align="right">Total</TableCell>
               <TableCell align="right">Created At</TableCell>
               <TableCell align="right">Updated At</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow
-              key={`row-`}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell
-                component="th"
-                scope="row"
-                className="tw-w-[200px]"
-              ></TableCell>
-              <TableCell></TableCell>
-              <TableCell align="right"></TableCell>
-              <TableCell align="right" suppressHydrationWarning></TableCell>
-              <TableCell align="right" suppressHydrationWarning></TableCell>
-            </TableRow>
+            {data?.transactions?.data.map(
+              (transaction: TransactionItem, index: number) => {
+                const dataTransaction = transaction.attributes;
+                return (
+                  <TableRow
+                    key={`transaction-${index}`}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      className="tw-w-[200px]"
+                    >
+                      <Image
+                        src={
+                          dataTransaction.product.data.attributes.image?.data[0]
+                            .attributes.url
+                        }
+                        alt="thumbnail-trasnaction"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {dataTransaction.product.data.attributes.name}
+                    </TableCell>
+                    <TableCell align="right">{dataTransaction.total}</TableCell>
+                    <TableCell align="right" suppressHydrationWarning>
+                      {formatDate(dataTransaction.createdAt)}
+                    </TableCell>
+                    <TableCell align="right" suppressHydrationWarning>
+                      {formatDate(dataTransaction.updatedAt)}
+                    </TableCell>
+                  </TableRow>
+                );
+              },
+            )}
           </TableBody>
         </Table>
       </TableContainer>
