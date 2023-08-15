@@ -42,7 +42,6 @@ export default function CreateBlogPost({
 
   const handleDrop = (acceptedFile: any) => {
     setFile(acceptedFile[0]);
-    console.log(file);
   };
 
   const handleSetTitle = (event: React.ChangeEvent<HTMLInputElement>) => {

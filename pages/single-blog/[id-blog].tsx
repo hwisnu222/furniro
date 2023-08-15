@@ -44,7 +44,6 @@ export async function getServerSideProps(ctx: any) {
       id: idBlog,
     },
   });
-  console.log(data);
 
   const post = data.blog.data;
   return {

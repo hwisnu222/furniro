@@ -124,7 +124,6 @@ export default function CreatePostProduct({
 }) {
   const editorRef = React.useRef(null);
   const [state, dispatch] = React.useReducer(reducerFunction, initialState);
-  console.log(categories);
 
   const [mutate] = useMutation(CREATE_PRODUCT);
   const uploadFile = async () => {
@@ -135,7 +134,6 @@ export default function CreatePostProduct({
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log(upload.data);
 
     return upload.data[0].id;
   };
@@ -162,8 +160,6 @@ export default function CreatePostProduct({
       type: Type.DESCRIPTION,
       payload: editorRef.current?.getContent(),
     });
-
-    console.log(variables);
 
     mutate({
       variables: {

@@ -2,7 +2,6 @@ import React from "react";
 import ImageNext from "next/image";
 
 export default function Image(props: any) {
-  console.log(props);
   return (
     <ImageNext
       alt="thumbnail"
