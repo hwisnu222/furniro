@@ -45,7 +45,15 @@ import { CartItem } from "@/interfaces/cart.interface";
 import { convertCurrency } from "@/utils/currency";
 import { DELETE_CART } from "@/graphql/mutations/cart.mutation";
 import { getTotalPrice } from "@/utils/cart/getTotalCart";
-import { STATUS_AUTH } from "@/constants";
+import { ROLE, STATUS_AUTH } from "@/constants";
+
+const AuthComponent = ({ children }: { children: React.ReactNode }) => {
+  const session = useSession();
+  if (session) {
+    return children;
+  }
+  return null;
+};
 
 export default function Header() {
   const router = useRouter();
@@ -56,7 +64,6 @@ export default function Header() {
   const [search, setSearch] = React.useState("");
 
   const session = useSession();
-  console.log(session);
 
   const [deleteCart] = useMutation(DELETE_CART, {
     onCompleted: () => {
@@ -109,7 +116,10 @@ export default function Header() {
       },
     });
   };
-
+  const pathAccounst =
+    session.data?.role === ROLE.Admin
+      ? "/admin/product/list"
+      : "/user/transaction";
   return (
     <>
       <div className="tw-sticky tw-top-0 tw-z-30 tw-hidden tw-items-center tw-justify-around tw-bg-white tw-p-4 md:tw-flex">
@@ -131,7 +141,7 @@ export default function Header() {
         </ul>
         {session.status === STATUS_AUTH.authenticated ? (
           <ul className="tw-flex tw-gap-4">
-            <Link href="/user/transaction">
+            <Link href={pathAccounst}>
               <li>
                 <IconButton>
                   <PermIdentityOutlined />
@@ -167,16 +177,18 @@ export default function Header() {
                 </IconButton>
               )}
             </li>
-            <li>
-              <IconButton component={Link} href="/user/wishlist">
-                <FavoriteOutlined />
-              </IconButton>
-            </li>
-            <li>
-              <IconButton onClick={handleDrawer}>
-                <ShoppingCartOutlined />
-              </IconButton>
-            </li>
+            <AuthComponent>
+              <li>
+                <IconButton component={Link} href="/user/wishlist">
+                  <FavoriteOutlined />
+                </IconButton>
+              </li>
+              <li>
+                <IconButton onClick={handleDrawer}>
+                  <ShoppingCartOutlined />
+                </IconButton>
+              </li>
+            </AuthComponent>
           </ul>
         ) : (
           <Stack gap={2} direction="row">
