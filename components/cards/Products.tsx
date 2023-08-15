@@ -81,7 +81,7 @@ export default function Products({ data }: ProductProps) {
                   Compare
                 </li>
               </Link>
-              <Link href={`/single-product/${item.id}`}>
+              <Link href={`/single-product/${item.attributes.slug}`}>
                 <li className="cursor-pointer  tw-flex tw-items-center tw-gap-1 tw-text-sm">
                   <Details />
                   Detail

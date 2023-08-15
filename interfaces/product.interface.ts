@@ -3,6 +3,7 @@ import { ImageItem } from "./image.interface";
 export interface ItemProduct {
   id: number;
   attributes: {
+    slug: string;
     name: string;
     image: ImageItem;
     summary: string;

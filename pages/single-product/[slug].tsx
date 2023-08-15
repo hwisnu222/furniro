@@ -290,18 +290,17 @@ export default function SingleProduct({
 }
 
 export async function getServerSideProps(ctx: any) {
-  const idProduct = ctx.params["id-product"];
+  const slug = ctx.params["slug"];
   const { data } = await client.query({
     query: GET_PRODUCT,
     variables: {
-      id: idProduct,
+      slug: slug,
     },
   });
   const { data: dataProducts } = await client.query({
     query: GET_PRODUCTS,
   });
   const product = data?.products?.data[0];
-  console.log(product);
   const products = dataProducts?.products?.data.slice(0, 8);
   return {
     props: {

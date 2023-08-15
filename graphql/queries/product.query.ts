@@ -6,6 +6,7 @@ export const GET_PRODUCTS = gql`
       data {
         id
         attributes {
+          slug
           name
           summary
           description
@@ -50,11 +51,12 @@ export const GET_PRODUCTS = gql`
 `;
 
 export const GET_PRODUCT = gql`
-  query getProduct($id: ID) {
-    products(filters: { id: { eq: $id } }) {
+  query getProduct($slug: String) {
+    products(filters: { slug: { eq: $slug } }) {
       data {
         id
         attributes {
+          slug
           name
           summary
           description

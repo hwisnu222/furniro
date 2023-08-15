@@ -1,5 +1,6 @@
 import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
+import { enqueueSnackbar } from "notistack";
 import Dropzone from "react-dropzone";
 import Image from "next/image";
 import { useMutation } from "@apollo/client";
@@ -19,6 +20,7 @@ import { ImageOutlined } from "@mui/icons-material";
 import { CREATE_PRODUCT } from "@/graphql/mutations/product.mutation";
 import { GET_CATEGORY } from "@/graphql/queries/product.query";
 import { API_BASE } from "@/config/api";
+import { slugger } from "@/utils/slugger";
 
 enum Type {
   NAME = "NAME",
@@ -155,6 +157,7 @@ export default function CreatePostProduct({
     const variables = state;
     delete variables.file;
     variables.image = idImage;
+    variables.slug = slugger(variables.name);
 
     dispatch({
       type: Type.DESCRIPTION,
@@ -164,6 +167,12 @@ export default function CreatePostProduct({
     mutate({
       variables: {
         data: variables,
+      },
+      onCompleted: () => {
+        enqueueSnackbar("Success create product", { variant: "success" });
+      },
+      onError: () => {
+        enqueueSnackbar("failed create product", { variant: "error" });
       },
     });
   };
@@ -247,7 +256,7 @@ export default function CreatePostProduct({
                 {...getRootProps()}
               >
                 <input {...getInputProps()} />
-                <Box className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-3 md:tw-flex-row ">
+                <Box className="tw-flex tw-cursor-pointer tw-flex-col tw-items-center tw-justify-center tw-gap-3 md:tw-flex-row ">
                   {state.file ? (
                     <Image
                       src={URL.createObjectURL(state.file)}
