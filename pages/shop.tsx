@@ -21,6 +21,7 @@ import Footer from "@/components/footers/Footer";
 import HeaderProduct from "@/components/headers/HeaderProduct";
 import Benefite from "@/components/footers/Benefite";
 import Filter from "@/components/filters/Filter";
+import NotList from "@/components/notFound/NotList";
 
 export default function Shop() {
   const router = useRouter();
@@ -42,8 +43,13 @@ export default function Shop() {
     [params],
   );
 
-  const { data } = useQuery(GET_PRODUCTS);
-  const products = data?.products?.data;
+  const { data } = useQuery(GET_PRODUCTS, {
+    fetchPolicy: "cache-and-network",
+    variables: {
+      filter: search.get("search") || "",
+    },
+  });
+  const products = React.useMemo(() => data?.products?.data, [data]);
 
   const handleOrder = (event: SelectChangeEvent) => {
     const value = event.target.value as string;
@@ -78,7 +84,9 @@ export default function Shop() {
         </Stack>
       </div>
       <Box className="tw-container tw-mx-auto tw-px-10">
-        <Products data={products} />
+        {!products?.length && <NotList />}
+
+        {products?.length && <Products data={products} />}
       </Box>
 
       <Benefite />
