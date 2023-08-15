@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { enqueueSnackbar } from "notistack";
 
 import {
   Box,
@@ -32,11 +33,11 @@ import { getTotalPrice } from "@/utils/cart/getTotalCart";
 export default function Cart() {
   const [deleteCart] = useMutation(DELETE_CART, {
     onCompleted: () => {
-      alert("Cart is delete");
+      enqueueSnackbar("Cart is delete", { variant: "success" });
       refetch();
     },
     onError: () => {
-      alert("failed delete cart");
+      enqueueSnackbar("failed delete cart", { variant: "error" });
     },
   });
 

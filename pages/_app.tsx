@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider } from "@mui/material";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { NextSeo } from "next-seo";
+import { SnackbarProvider } from "notistack";
 
 import { ApolloProvider } from "@apollo/client";
 import client from "@/graphql/client";
@@ -27,13 +28,15 @@ export default function App({
   return (
     <ApolloProvider client={client}>
       <SessionProvider session={session}>
-        <NextSeo
-          title={Component?.meta?.title}
-          description={Component?.meta?.description}
-        />
-        <ThemeProvider theme={theme}>
-          <Component {...pageProps} />
-        </ThemeProvider>
+        <SnackbarProvider>
+          <NextSeo
+            title={Component?.meta?.title}
+            description={Component?.meta?.description}
+          />
+          <ThemeProvider theme={theme}>
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </SnackbarProvider>
       </SessionProvider>
     </ApolloProvider>
   );

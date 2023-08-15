@@ -2,6 +2,10 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
+import { useMutation, useQuery } from "@apollo/client";
+import { useSession } from "next-auth/react";
+import { enqueueSnackbar } from "notistack";
 
 import {
   IconButton,
@@ -38,11 +42,10 @@ import Logo from "@/assets/images/logo-furniro.png";
 import FunirtureImg from "@/assets/images/furniture.png";
 import { GET_CARTS } from "@/graphql/queries/cart.query";
 import { CartItem } from "@/interfaces/cart.interface";
-import { useMutation, useQuery } from "@apollo/client";
 import { convertCurrency } from "@/utils/currency";
 import { DELETE_CART } from "@/graphql/mutations/cart.mutation";
 import { getTotalPrice } from "@/utils/cart/getTotalCart";
-import { useSearchParams } from "next/navigation";
+import { STATUS_AUTH } from "@/constants";
 
 export default function Header() {
   const router = useRouter();
@@ -52,13 +55,16 @@ export default function Header() {
   const [showSearch, setShowSearch] = React.useState(false);
   const [search, setSearch] = React.useState("");
 
+  const session = useSession();
+  console.log(session);
+
   const [deleteCart] = useMutation(DELETE_CART, {
     onCompleted: () => {
-      alert("Cart is delete");
+      enqueueSnackbar("Cart is delete", { variant: "success" });
       refetch();
     },
     onError: () => {
-      alert("failed delete cart");
+      enqueueSnackbar("failed delete cart", { variant: "error" });
     },
   });
 
@@ -123,73 +129,76 @@ export default function Header() {
             <Link href="/contact">Contact</Link>
           </li>
         </ul>
-        <ul className="tw-flex tw-gap-4">
-          <Link href="/user/transaction">
+        {session.status === STATUS_AUTH.authenticated ? (
+          <ul className="tw-flex tw-gap-4">
+            <Link href="/user/transaction">
+              <li>
+                <IconButton>
+                  <PermIdentityOutlined />
+                </IconButton>
+              </li>
+            </Link>
+
             <li>
-              <IconButton>
-                <PermIdentityOutlined />
+              {showSearch ? (
+                <TextField
+                  size="small"
+                  className="tw-w-full"
+                  autoFocus
+                  onChange={handleSearch}
+                  onKeyDown={handleEnterSearch}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {searchParams.get("search") ? (
+                          <IconButton onClick={resetSearchParams}>
+                            <Close className="tw-cursor-pointer" />
+                          </IconButton>
+                        ) : (
+                          <SearchOutlined className="tw-cursor-pointer" />
+                        )}
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              ) : (
+                <IconButton onClick={handleShowSearch}>
+                  <SearchOutlined />
+                </IconButton>
+              )}
+            </li>
+            <li>
+              <IconButton component={Link} href="/user/wishlist">
+                <FavoriteOutlined />
               </IconButton>
             </li>
-          </Link>
-
-          <li>
-            {showSearch ? (
-              <TextField
-                size="small"
-                className="tw-w-full"
-                autoFocus
-                onChange={handleSearch}
-                onKeyDown={handleEnterSearch}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {searchParams.get("search") ? (
-                        <IconButton onClick={resetSearchParams}>
-                          <Close className="tw-cursor-pointer" />
-                        </IconButton>
-                      ) : (
-                        <SearchOutlined className="tw-cursor-pointer" />
-                      )}
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            ) : (
-              <IconButton onClick={handleShowSearch}>
-                <SearchOutlined />
+            <li>
+              <IconButton onClick={handleDrawer}>
+                <ShoppingCartOutlined />
               </IconButton>
-            )}
-          </li>
-          <li>
-            <IconButton component={Link} href="/user/wishlist">
-              <FavoriteOutlined />
-            </IconButton>
-          </li>
-          <li>
-            <IconButton onClick={handleDrawer}>
-              <ShoppingCartOutlined />
-            </IconButton>
-          </li>
-        </ul>
-        {/* <Stack gap={2} direction="row">
-          <Button
-            variant="contained"
-            className="tw-bg-default-200"
-            component={Link}
-            href="/auth/login"
-            target="_blank"
-          >
-            Login
-          </Button>
-          <Button
-            variant="outlined"
-            component={Link}
-            href="/auth/register"
-            target="_blank"
-          >
-            Register
-          </Button>
-        </Stack> */}
+            </li>
+          </ul>
+        ) : (
+          <Stack gap={2} direction="row">
+            <Button
+              variant="contained"
+              className="tw-bg-default-200"
+              component={Link}
+              href="/auth/login"
+              target="_blank"
+            >
+              Login
+            </Button>
+            <Button
+              variant="outlined"
+              component={Link}
+              href="/auth/register"
+              target="_blank"
+            >
+              Register
+            </Button>
+          </Stack>
+        )}
       </div>
 
       {/* drawer */}

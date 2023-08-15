@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { enqueueSnackbar } from "notistack";
 
 import { useMutation } from "@apollo/client";
 import { Button, Avatar, Box } from "@mui/material";
@@ -23,10 +24,12 @@ export default function Products({ data }: ProductProps) {
         },
       },
       onCompleted: () => {
-        alert("Product has added to wishlist");
+        enqueueSnackbar("Product has added to wishlist", {
+          variant: "success",
+        });
       },
       onError: () => {
-        alert("failed add product to wishlist");
+        enqueueSnackbar("failed add product to wishlist", { variant: "error" });
       },
     });
   };
@@ -40,10 +43,10 @@ export default function Products({ data }: ProductProps) {
         },
       },
       onCompleted: () => {
-        alert("Product has added to cart");
+        enqueueSnackbar("Product has added to cart", { variant: "success" });
       },
       onError: () => {
-        alert("failed add product to cart");
+        enqueueSnackbar("failed add product to cart", { variant: "error" });
       },
     });
   };
