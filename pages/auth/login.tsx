@@ -32,11 +32,10 @@ export default function Login() {
   };
 
   const handleSubmit = async () => {
-    console.log(form);
     await signIn("credentials", {
       username: form.email,
       password: form.password,
-      callbackUrl: "/admin/product/list",
+      callbackUrl: "/",
     });
   };
   return (
