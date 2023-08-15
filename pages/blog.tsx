@@ -25,7 +25,7 @@ import { useLazyQuery } from "@apollo/client";
 import Link from "next/link";
 import { formatDate } from "@/utils/date";
 
-export default function Blog({ blogs }: { blogs: ListBlogProps }) {
+export default function Blog({ blogs }: { blogs: ListBlogProps[] }) {
   const [blogsList, setBlogList] = React.useState(blogs || []);
   const [search, setSearch] = React.useState("");
 
@@ -91,7 +91,10 @@ export default function Blog({ blogs }: { blogs: ListBlogProps }) {
                       __html: post.attributes.article.slice(0, 200),
                     }}
                   ></div>
-                  <Button component={Link} href={`/single-blog/${post.id}`}>
+                  <Button
+                    component={Link}
+                    href={`/single-blog/${post.attributes.slug}`}
+                  >
                     Read More
                   </Button>
                 </div>

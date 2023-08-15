@@ -6,6 +6,7 @@ export const GET_BLOGS = gql`
       data {
         id
         attributes {
+          slug
           title
           article
           category_blog {
@@ -71,8 +72,8 @@ export const GET_CATEGORY_BLOG = gql`
 `;
 
 export const GET_DETAIL_BLOG = gql`
-  query getBlog($id: ID) {
-    blog(id: $id) {
+  query getBlog($slug: String) {
+    blogs(filters: { slug: { eq: $slug } }) {
       data {
         attributes {
           title

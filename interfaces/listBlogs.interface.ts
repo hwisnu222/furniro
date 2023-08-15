@@ -1,6 +1,7 @@
 export interface ListBlogProps {
   id: number;
   attributes: {
+    slug: string;
     title: string;
     article: string;
     image: {

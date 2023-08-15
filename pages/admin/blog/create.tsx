@@ -23,12 +23,15 @@ import {
 
 import { CategoryBlog } from "@/interfaces/listBlogs.interface";
 import { uploadMedia } from "@/services/upload";
+import { slugger } from "@/utils/slugger";
+import { useSession } from "next-auth/react";
 
 export default function CreateBlogPost({
   categories,
 }: {
   categories: CategoryBlog[];
 }) {
+  const session = useSession();
   const editorRef = React.useRef(null);
   const [category, setCategory] = React.useState("");
   const [title, setTitle] = React.useState("");
@@ -66,11 +69,13 @@ export default function CreateBlogPost({
           article: editorRef.current.getContent(),
           category_blog: category,
           image: idMedia,
+          slug: slugger(title),
+          users_permissions_user: session.id,
         },
       },
       onCompleted: () => {
         alert("Post is created!");
-        clearForm(0);
+        clearForm();
       },
       onError: () => {
         alert("Failed post blog!");
