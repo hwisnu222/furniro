@@ -158,6 +158,13 @@ export default function CreatePostProduct({
   };
 
   const submitPost = async () => {
+    // validate input
+    if (!(state.name || state.category || state.price)) {
+      return enqueueSnackbar("Please, fill name, category, and price input!", {
+        variant: "error",
+      });
+    }
+
     const idImages = await uploadFile();
     const variables = state;
     delete variables.file;
@@ -224,11 +231,12 @@ export default function CreatePostProduct({
               name={Type.PRICE}
             />
             <Select
-              value="ten"
+              value={state.disscount}
               label="Discount"
               className="tw-w-full"
               onChange={handleSelectDisscount}
             >
+              <MenuItem value="">None</MenuItem>
               <MenuItem value={10}>10%</MenuItem>
               <MenuItem value={20}>20%</MenuItem>
               <MenuItem value={30}>30%</MenuItem>
