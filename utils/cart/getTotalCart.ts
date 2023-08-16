@@ -16,3 +16,13 @@ export const getTotalPrice = (carts: CartItem[]) => {
 
   return total;
 };
+
+/**
+ *
+ * @param cart {CartItem}
+ * @returns number
+ */
+
+export const getSumProduct = (cart: CartItem) => {
+  return cart.attributes.total * cart.attributes.product.data.attributes.price;
+};

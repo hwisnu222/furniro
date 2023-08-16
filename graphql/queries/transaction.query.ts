@@ -6,22 +6,33 @@ export const GET_TRANSACTIONS = gql`
       data {
         id
         attributes {
-          total
-          product {
+          status
+          carts {
             data {
               id
               attributes {
-                name
-                image {
+                total
+                product {
                   data {
+                    id
                     attributes {
-                      url
+                      name
+                      image {
+                        data {
+                          id
+                          attributes {
+                            url
+                          }
+                        }
+                      }
                     }
                   }
                 }
               }
             }
           }
+          createdAt
+          updatedAt
         }
       }
       meta {

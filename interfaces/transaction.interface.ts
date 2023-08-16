@@ -1,11 +1,12 @@
+import { CartItem } from "./cart.interface";
 import { ItemProduct } from "./product.interface";
 
 export interface TransactionItem {
   id: number;
   attributes: {
-    total: number;
-    product: {
-      data: ItemProduct;
+    status: string;
+    carts: {
+      data: CartItem[];
     };
     createdAt?: string;
     updatedAt?: string;

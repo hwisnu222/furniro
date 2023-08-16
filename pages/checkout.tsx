@@ -1,4 +1,6 @@
 import React from "react";
+import { useSession } from "next-auth/react";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   TextField,
@@ -16,7 +18,45 @@ import Header from "@/components/headers/Header";
 import Container from "@/components/layouts/Container";
 import HeaderProduct from "@/components/headers/HeaderProduct";
 
-export default function checkout() {
+import { GET_CARTS } from "@/graphql/queries/cart.query";
+import { CartItem } from "@/interfaces/cart.interface";
+
+import { getSumProduct, getTotalPrice } from "@/utils/cart/getTotalCart";
+import { convertCurrency } from "@/utils/currency";
+import { ADD_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
+import { UPDATE_CARTS } from "@/graphql/mutations/cart.mutation";
+import { STATUS_TRANSACTION } from "@/constants";
+
+export default function Checkout() {
+  const session = useSession();
+  const { data } = useQuery(GET_CARTS);
+
+  const [createTransaction] = useMutation(ADD_TRANSACTION);
+  const [updateCarts] = useMutation(UPDATE_CARTS);
+
+  const updateTransactionToCart = (transaction: any) => {
+    updateCarts({
+      variables: {
+        data: {},
+        ids: [],
+      },
+    });
+  };
+
+  const handleCheckoutCart = () => {
+    createTransaction({
+      variables: {
+        data: {
+          status: STATUS_TRANSACTION.pending,
+          users_permissions_user: session.data?.user.id,
+        },
+      },
+      onCompleted: (data) => {
+        console.log(data);
+        // updateTransactionToCart(data);
+      },
+    });
+  };
   return (
     <>
       <Header />
@@ -57,25 +97,31 @@ export default function checkout() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td className=" tw-py-2 tw-text-sm">
-                    <span className="tw-mr-2 tw-text-gray-400">
-                      Asgard Sofa
-                    </span>
-                    <span>x 1</span>
-                  </td>
-                  <td className="tw-py-2 tw-text-right">Rp 25.000.000</td>
-                </tr>
+                {data?.carts.data.map((cart: CartItem, index: number) => (
+                  <tr key={`cart-${index}`}>
+                    <td className=" tw-py-2 tw-text-sm">
+                      <span className="tw-mr-2 tw-text-gray-400">
+                        {cart.attributes.product.data.attributes.name}
+                      </span>
+                      <span>x {cart.attributes.total}</span>
+                    </td>
+                    <td className="tw-py-2 tw-text-right">
+                      {convertCurrency(getSumProduct(cart))}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
               <tfoot>
                 <tr>
                   <td className="text-gray-400 tw-py-2 tw-text-sm">Subtotal</td>
-                  <td className="tw-py-2 tw-text-right">Rp 25.000.000</td>
+                  <td className="tw-py-2 tw-text-right">
+                    {convertCurrency(getTotalPrice(data?.carts.data))}
+                  </td>
                 </tr>
                 <tr>
                   <td className="text-gray-400 tw-py-2 tw-text-sm">Total</td>
                   <td className="tw-py-2 tw-text-right tw-text-lg tw-font-bold tw-text-default-200">
-                    Rp 25.000.000
+                    {convertCurrency(getTotalPrice(data?.carts.data))}
                   </td>
                 </tr>
               </tfoot>
@@ -114,7 +160,9 @@ export default function checkout() {
               other purposes described in our privacy policy.
             </p>
             <div className="tw-flex tw-items-center tw-justify-center">
-              <Button variant="outlined">Place order</Button>
+              <Button variant="outlined" onClick={handleCheckoutCart}>
+                Place order
+              </Button>
             </div>
           </div>
         </Box>

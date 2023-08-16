@@ -8,3 +8,9 @@ export enum ROLE {
   Public = "Public",
   Admin = "Admin",
 }
+
+export enum STATUS_TRANSACTION {
+  success = "success",
+  pending = "pending",
+  canceled = "canceled",
+}
