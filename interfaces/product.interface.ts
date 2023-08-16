@@ -25,6 +25,7 @@ export interface ItemProduct {
     rating: number;
     stock: number;
     review: any;
+    additional?: string;
     createdAt: string;
     updatedAt: string;
   };

@@ -44,14 +44,16 @@ const DescriptionPanel = ({ description }: { description: string }) => {
   );
 };
 
-const TabPannel = (key: string, product: any | string) => {
+const TabPannel = (key: string, product: ItemProduct) => {
   switch (key) {
     case "additional":
-      return <p className="tw-text-gray-400">{product.additional}</p>;
+      return (
+        <p className="tw-text-gray-400">{product.attributes.additional}</p>
+      );
     case "review":
       return <p className="tw-text-gray-400">Review</p>;
     default:
-      return <DescriptionPanel description={product.description} />;
+      return <DescriptionPanel description={product.attributes.description} />;
   }
 };
 

@@ -34,6 +34,7 @@ enum Type {
   CATEGORY = "CATEGORY",
   SKU = "SKU",
   STOCK = "STOCK",
+  ADDITIONAL = "ADDITIONAL",
   FILE = "FILE",
   MULTIPLE = "MULTIPLE",
 }
@@ -49,6 +50,7 @@ const initialState = {
   category: "",
   sku: "",
   stock: 0,
+  additional: "",
   file: null,
 };
 
@@ -103,6 +105,11 @@ const reducerFunction = (state = initialState, action: any) => {
       return {
         ...state,
         stock: parseInt(action.payload),
+      };
+    case Type.ADDITIONAL:
+      return {
+        ...state,
+        additional: action.payload,
       };
     case Type.FILE:
       return {
@@ -269,6 +276,12 @@ export default function CreatePostProduct({
             onChange={handleChange}
             name={Type.SUMMARY}
             value={state.summary}
+          />
+          <TextField
+            label="Additional"
+            onChange={handleChange}
+            name={Type.ADDITIONAL}
+            value={state.additional}
           />
           <Select
             value={state.category}
