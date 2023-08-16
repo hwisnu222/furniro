@@ -9,3 +9,13 @@ export const CREATE_PRODUCT = gql`
     }
   }
 `;
+
+export const UPDATE_PRODUCT = gql`
+  mutation updateProduct($data: ProductInput!, $id: ID!) {
+    updateProduct(data: $data, id: $id) {
+      data {
+        id
+      }
+    }
+  }
+`;

@@ -18,6 +18,7 @@ import {
   TextField,
   Pagination,
   Divider,
+  IconButton,
 } from "@mui/material";
 
 import client from "@/graphql/client";
@@ -27,6 +28,7 @@ import { GET_PRODUCTS } from "@/graphql/queries/product.query";
 import { ItemProduct } from "@/interfaces/product.interface";
 import FornitureImg from "@/assets/images/furniture.png";
 import { formatDate } from "@/utils/date";
+import { Edit } from "@mui/icons-material";
 
 export default function List({ products }: { products: ItemProduct[] }) {
   const [productList, setProductList] = React.useState(products || []);
@@ -82,6 +84,7 @@ export default function List({ products }: { products: ItemProduct[] }) {
               <TableCell align="right">Category</TableCell>
               <TableCell align="right">Created At</TableCell>
               <TableCell align="right">Updated At</TableCell>
+              <TableCell align="right"></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -107,6 +110,13 @@ export default function List({ products }: { products: ItemProduct[] }) {
                 </TableCell>
                 <TableCell align="right" suppressHydrationWarning>
                   {formatDate(product.attributes.updatedAt)}
+                </TableCell>
+                <TableCell align="right">
+                  <Link href={`/admin/product/edit?id=${product.id}`}>
+                    <IconButton>
+                      <Edit />
+                    </IconButton>
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}
