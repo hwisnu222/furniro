@@ -6,13 +6,17 @@ declare module "next-auth" {
     //   role?: string | number;
     //   token?: string;
     // };
-    id?: number | string;
-    role?: string;
-    token?: string;
+    user: {
+      id: number;
+      role?: string;
+      token?: string;
+      username?: string;
+    };
   }
   interface JWT {
-    role: string | number;
+    role: string;
     token: string;
+    username?: string;
   }
 
   interface User extends DefaultUser {

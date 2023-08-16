@@ -24,7 +24,7 @@ export default function Transaction() {
     variables: {
       users_permissions_user: {
         id: {
-          eq: session?.data?.id,
+          eq: session.data?.user.id,
         },
       },
     },

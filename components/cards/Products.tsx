@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { enqueueSnackbar } from "notistack";
+import { useSession } from "next-auth/react";
 
 import { useMutation } from "@apollo/client";
 import { Button, Avatar, Box } from "@mui/material";
@@ -11,7 +12,6 @@ import { convertCurrency } from "@/utils/currency";
 import { ItemProduct, ProductProps } from "@/interfaces/product.interface";
 import { ADD_CART } from "@/graphql/mutations/cart.mutation";
 import { CREATE_WISHLIST } from "@/graphql/mutations/wishlist.mutation";
-import { useSession } from "next-auth/react";
 
 export default function Products({ data }: ProductProps) {
   const session = useSession();
@@ -19,7 +19,7 @@ export default function Products({ data }: ProductProps) {
   const [addWishlist] = useMutation(CREATE_WISHLIST);
 
   const handleAddWishlist = (id: number) => {
-    const idUser = session?.data?.id;
+    const idUser = session.data?.user.id;
     addWishlist({
       variables: {
         data: {
@@ -44,6 +44,7 @@ export default function Products({ data }: ProductProps) {
         data: {
           total: 1,
           product: id,
+          users_permissions_user: session.data?.user.id,
         },
       },
       onCompleted: () => {

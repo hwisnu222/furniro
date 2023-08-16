@@ -4,10 +4,18 @@ import Image from "next/image";
 
 import Logo from "@/assets/images/logo-furniro.png";
 
-import { Avatar, IconButton, Menu, MenuItem } from "@mui/material";
-import { signOut } from "next-auth/react";
+import {
+  Avatar,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  Box,
+} from "@mui/material";
+import { signOut, useSession } from "next-auth/react";
 
 export default function HeaderAdmin() {
+  const session = useSession();
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -29,9 +37,14 @@ export default function HeaderAdmin() {
           <Image src={Logo} width={152} alt="log-furniro" />
         </Link>
 
-        <IconButton onClick={handleOpenMenu}>
-          <Avatar>A</Avatar>
-        </IconButton>
+        <Box className="tw-flex tw-items-center tw-gap-2">
+          <Typography>{session.data?.user.username}</Typography>
+          <IconButton onClick={handleOpenMenu}>
+            <Avatar>
+              {session.data?.user.username?.charAt(0).toUpperCase()}
+            </Avatar>
+          </IconButton>
+        </Box>
 
         <Menu
           id="basic-menu"

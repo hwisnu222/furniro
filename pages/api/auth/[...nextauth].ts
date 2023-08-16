@@ -64,7 +64,7 @@ export default NextAuth({
       user: User;
       token: JWT;
     }) => {
-      session = Object.assign(session, token);
+      session.user = Object.assign(session.user, token);
       return Promise.resolve(session);
     },
   },

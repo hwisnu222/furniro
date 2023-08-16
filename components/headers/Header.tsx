@@ -76,6 +76,15 @@ export default function Header() {
   });
 
   const { data, refetch } = useQuery(GET_CARTS, {
+    variables: {
+      filters: {
+        users_permissions_user: {
+          id: {
+            eq: session.data?.user.id,
+          },
+        },
+      },
+    },
     fetchPolicy: "cache-and-network",
   });
   const carts = data?.carts.data;
@@ -116,8 +125,9 @@ export default function Header() {
       },
     });
   };
+  console.log(session.data?.user.role);
   const pathAccounst =
-    session.data?.role === ROLE.Admin
+    session.data?.user.role === ROLE.Admin
       ? "/admin/product/list"
       : "/user/transaction";
   return (
