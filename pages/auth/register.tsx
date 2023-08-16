@@ -13,6 +13,7 @@ import { VisibilityOff, Visibility } from "@mui/icons-material";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import { REGISTER } from "@/graphql/mutations/authentication.mutation";
 import { useMutation } from "@apollo/client";
+import { enqueueSnackbar } from "notistack";
 
 export default function Register() {
   const router = useRouter();
@@ -40,11 +41,15 @@ export default function Register() {
         password: form.password,
       },
       onCompleted: () => {
+        enqueueSnackbar("User is registered!. please login first", {
+          variant: "success",
+        });
+
         router.push("/auth/login");
       },
       onError: (error) => {
         console.log(error);
-        alert("failed register user");
+        enqueueSnackbar("failed register user", { variant: "error" });
       },
     });
   };
