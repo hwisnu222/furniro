@@ -159,7 +159,6 @@ export default function CreatePostProduct({
 
   const submitPost = async () => {
     const idImages = await uploadFile();
-    console.log(idImages);
     const variables = state;
     delete variables.file;
     variables.image = idImages;

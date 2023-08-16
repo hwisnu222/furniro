@@ -24,7 +24,6 @@ export default NextAuth({
           const { data: user } = await API_BASE.get(
             `/users/${login.user.id}?populate=role`,
           );
-          console.log({ user });
 
           return {
             id: login.user.id,

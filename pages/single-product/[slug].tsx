@@ -287,7 +287,6 @@ export async function getServerSideProps(ctx: any) {
   });
   const product = data?.products?.data[0];
   const products = dataProducts?.products?.data.slice(0, 8);
-  console.log(product.attributes.image.data);
   return {
     props: {
       product,
