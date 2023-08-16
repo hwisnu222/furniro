@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_CARTS = gql`
-  query getCarts {
-    carts {
+  query getCarts($filters: CartFiltersInput) {
+    carts(filters: $filters) {
       data {
         id
         attributes {
