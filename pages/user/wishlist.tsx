@@ -21,10 +21,15 @@ import { Delete } from "@mui/icons-material";
 import { GET_WISHLISTS } from "@/graphql/queries/wishlist.query";
 import { DELETE_WISHLIST } from "@/graphql/mutations/wishlist.mutation";
 import NotList from "@/components/notFound/NotList";
+import { useSession } from "next-auth/react";
 
 export default function Wishlist() {
+  const session = useSession();
   const { data, refetch } = useQuery(GET_WISHLISTS, {
     fetchPolicy: "cache-and-network",
+    variables: {
+      filters: { users_permissions_user: { id: { eq: session?.data?.id } } },
+    },
   });
 
   const [deleteWishlist] = useMutation(DELETE_WISHLIST, {
@@ -71,7 +76,7 @@ export default function Wishlist() {
                       <Image
                         src={
                           wishlist.attributes.product.data?.attributes?.image
-                            .data.attributes.url
+                            .data[0].attributes.url
                         }
                         alt="wishlist-product"
                         className="tw-h-32 tw-w-32 tw-object-cover"

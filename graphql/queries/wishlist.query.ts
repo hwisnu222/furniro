@@ -11,8 +11,8 @@ export const ADD_LIKE = gql`
 `;
 
 export const GET_WISHLISTS = gql`
-  query getWishlist($id: String) {
-    wishlists(filters: { users_permissions_user: { id: $id } }) {
+  query getWishlist($filters: WishlistFiltersInput) {
+    wishlists(filters: $filters) {
       data {
         id
         attributes {
