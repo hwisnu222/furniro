@@ -16,7 +16,7 @@ import {
   Tab,
 } from "@mui/material";
 import Image from "@/components/images/Image";
-import { AddOutlined } from "@mui/icons-material";
+import { AddOutlined, Edit } from "@mui/icons-material";
 
 import { GET_PRODUCT, GET_PRODUCTS } from "@/graphql/queries/product.query";
 
@@ -29,7 +29,9 @@ import Container from "@/components/layouts/Container";
 import FurnitureImg from "../../assets/images/furniture.png";
 import { convertCurrency } from "@/utils/currency";
 import { ADD_CART } from "@/graphql/mutations/cart.mutation";
-import { ItemProduct, ProductProps } from "@/interfaces/product.interface";
+import { ItemProduct } from "@/interfaces/product.interface";
+import RoleComponent from "@/components/authorization/RoleComponent";
+import { ROLE } from "@/constants";
 
 const DescriptionPanel = ({ description }: { description: string }) => {
   return (
@@ -137,7 +139,16 @@ export default function SingleProduct({
           />
         </div>
         <Box gap={6} className="tw-w-full">
-          <h3 className="tw-text-4xl">{product?.attributes.name}</h3>
+          <Stack direction="row" gap={2}>
+            <h3 className="tw-text-4xl">{product?.attributes.name}</h3>
+            <RoleComponent role={[ROLE.Admin]}>
+              <Link href={`/admin/product/edit?id=${product.id}`}>
+                <IconButton>
+                  <Edit />
+                </IconButton>
+              </Link>
+            </RoleComponent>
+          </Stack>
           <p className="tw-text-xl tw-font-semibold tw-text-gray-300">
             {convertCurrency(product?.attributes.price)}
           </p>
@@ -150,7 +161,7 @@ export default function SingleProduct({
           </Stack>
           <p className="tw-mb-8">{product?.attributes.summary}</p>
 
-          {product?.attributes.size?.length && (
+          {!!product?.attributes.size?.length && (
             <>
               <h3 className="tw-mb-2 tw-font-semibold tw-text-gray-400">
                 Size
@@ -279,7 +290,7 @@ export async function getServerSideProps(ctx: any) {
   const { data } = await client.query({
     query: GET_PRODUCT,
     variables: {
-      slug: slug,
+      filters: { slug: { eq: slug } },
     },
   });
   const { data: dataProducts } = await client.query({
