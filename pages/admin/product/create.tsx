@@ -33,6 +33,7 @@ enum Type {
   CATEGORY = "CATEGORY",
   SKU = "SKU",
   STOCK = "STOCK",
+  ADDITIONAL = "ADDITIONAL",
   FILE = "FILE",
 }
 
@@ -47,6 +48,7 @@ const initialState = {
   category: "",
   sku: "",
   stock: 0,
+  additional: "",
   file: null,
 };
 
@@ -101,6 +103,11 @@ const reducerFunction = (state = initialState, action: any) => {
       return {
         ...state,
         stock: parseInt(action.payload),
+      };
+    case Type.ADDITIONAL:
+      return {
+        ...state,
+        additional: action.payload,
       };
     case Type.FILE:
       return {
@@ -160,21 +167,29 @@ export default function CreatePostProduct({
   const submitPost = async () => {
     // validate input
     if (!(state.name || state.category || state.price)) {
-      return enqueueSnackbar("Please, fill name, category, and price input!", {
+      enqueueSnackbar("Please, fill name, category, and price input!", {
         variant: "error",
       });
+      return;
     }
+
+    if (!state.file?.length) {
+      enqueueSnackbar("Image not upload!, Please upload image first", {
+        variant: "error",
+      });
+      return;
+    }
+
+    dispatch({
+      type: Type.DESCRIPTION,
+      payload: editorRef.current?.getContent(),
+    });
 
     const idImages = await uploadFile();
     const variables = state;
     delete variables.file;
     variables.image = idImages;
     variables.slug = slugger(variables.name);
-
-    dispatch({
-      type: Type.DESCRIPTION,
-      payload: editorRef.current?.getContent(),
-    });
 
     mutate({
       variables: {
@@ -211,6 +226,16 @@ export default function CreatePostProduct({
       <Box className="tw-flex tw-flex-col tw-gap-6 md:tw-flex-row">
         <Box className="tw-flex tw-flex-col tw-gap-4 md:tw-w-3/4">
           <TextField label="Name" onChange={handleChange} name={Type.NAME} />
+          <TextField
+            label="Summary"
+            onChange={handleChange}
+            name={Type.SUMMARY}
+          />
+          <TextField
+            label="Additional"
+            onChange={handleChange}
+            name={Type.ADDITIONAL}
+          />
           <Select
             value={state.category}
             label="Category"
