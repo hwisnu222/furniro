@@ -28,7 +28,9 @@ export default function Wishlist() {
   const { data, refetch } = useQuery(GET_WISHLISTS, {
     fetchPolicy: "cache-and-network",
     variables: {
-      filters: { users_permissions_user: { id: { eq: session?.data?.id } } },
+      filters: {
+        users_permissions_user: { id: { eq: session.data?.user.id } },
+      },
     },
   });
 
