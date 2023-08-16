@@ -27,10 +27,10 @@ body {
 .slick-center{
   transform: scale(1) !important;
   transform-origin: center;
-  transition: all 1 ease-in-out;
+  transition: all 2 ease-in-out;
 }
 
-.click-slide{
+.slick-slide{
   transform: scale(0.7);
 }
 
