@@ -29,17 +29,25 @@ import { ItemProduct } from "@/interfaces/product.interface";
 import FornitureImg from "@/assets/images/furniture.png";
 import { formatDate } from "@/utils/date";
 import { Edit } from "@mui/icons-material";
+import { Meta } from "@/interfaces/meta.interface";
 
-export default function List({ products }: { products: ItemProduct[] }) {
+export default function List({
+  products,
+}: {
+  products: {
+    data: ItemProduct[];
+    meta: Meta;
+  };
+}) {
   const [productList, setProductList] = React.useState(products || []);
   const [search, setSearch] = React.useState("");
-
+  const [page, setPage] = React.useState(0);
   const [getProducts] = useLazyQuery(GET_PRODUCTS, {
     variables: {
       filter: search,
     },
     onCompleted: (data) => {
-      const dataProduct = data.products.data;
+      const dataProduct = data.products;
       setProductList(dataProduct);
     },
   });
@@ -48,6 +56,14 @@ export default function List({ products }: { products: ItemProduct[] }) {
     setSearch(event.target.value);
     getProducts();
   };
+
+  const handlePagination = (
+    event: React.ChangeEvent<unknown>,
+    value: number,
+  ) => {
+    setPage(value);
+  };
+  console.log(productList);
   return (
     <DashboardLayout>
       <HeaderCard
@@ -88,7 +104,7 @@ export default function List({ products }: { products: ItemProduct[] }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {productList.map((product: ItemProduct, index: number) => (
+            {productList.data?.map((product: ItemProduct, index: number) => (
               <TableRow
                 key={`row-${index}`}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -125,7 +141,16 @@ export default function List({ products }: { products: ItemProduct[] }) {
       </TableContainer>
       <Divider />
       <Box className="tw-flex tw-justify-end tw-py-4">
-        <Pagination count={10} showFirstButton showLastButton />
+        <Pagination
+          page={page}
+          count={Math.floor(
+            productList.meta?.pagination.total /
+              productList.meta?.pagination.pageSize,
+          )}
+          onChange={handlePagination}
+          showFirstButton
+          showLastButton
+        />
       </Box>
     </DashboardLayout>
   );
@@ -135,7 +160,7 @@ export async function getServerSideProps() {
   const { data } = await client.query({
     query: GET_PRODUCTS,
   });
-  const products = data.products.data;
+  const products = data.products;
 
   return {
     props: {
