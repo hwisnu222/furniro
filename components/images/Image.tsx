@@ -10,7 +10,7 @@ export default function Image(props: any) {
         <Skeleton variant="rectangular" className="tw-h-full tw-w-full" />
       )}
       <ImageNext
-        hidden={loading}
+        // hidden={loading}
         alt="thumbnail"
         width={200}
         height={400}

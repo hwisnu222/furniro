@@ -1,13 +1,13 @@
 `use client`;
 import React from "react";
 import { Box, Button, InputAdornment, TextField } from "@mui/material";
-import Image from "next/image";
 
 import Benefite from "@/components/footers/Benefite";
 import Footer from "@/components/footers/Footer";
 import Header from "@/components/headers/Header";
 import HeaderProduct from "@/components/headers/HeaderProduct";
 import Container from "@/components/layouts/Container";
+import Image from "@/components/images/Image";
 
 import FunitureImg from "../assets/images/furniture.png";
 import {
@@ -28,6 +28,7 @@ import { formatDate } from "@/utils/date";
 export default function Blog({ blogs }: { blogs: ListBlogProps[] }) {
   const [blogsList, setBlogList] = React.useState(blogs || []);
   const [search, setSearch] = React.useState("");
+  console.log(blogsList[0].attributes.image.data.attributes.url);
 
   const [getBlogs] = useLazyQuery(GET_BLOGS, {
     variables: {
@@ -55,11 +56,9 @@ export default function Blog({ blogs }: { blogs: ListBlogProps[] }) {
             {blogsList.map((post: ListBlogProps, index: number) => (
               <section className="tw-mb-8" key={`post-${index}`}>
                 <Image
-                  src={FunitureImg}
+                  src={post.attributes.image.data.attributes.url}
                   alt="thumbnail-post"
                   fill={false}
-                  width={600}
-                  height={350}
                   className="object-cover ronded-md tw-h-72 tw-w-full"
                 />
                 <div className="tw-flex tw-gap-8 tw-py-2">
@@ -129,12 +128,12 @@ export default function Blog({ blogs }: { blogs: ListBlogProps[] }) {
 
               <h3 className="tw-mb-4 tw-text-2xl tw-font-bold">Recent Posts</h3>
               <div className="tw-flex tw-items-center tw-gap-4">
-                <Image
+                {/* <Image
                   src={FunitureImg}
                   alt="thumbnail-recent"
                   fill={false}
                   className="tw-h-20 tw-w-20 tw-rounded-sm"
-                />
+                /> */}
                 <div>
                   <p className="tw-cursor-pointer">Lorem ipsum dolom</p>
                   <p className="tw-text-sm tw-text-gray-400">03 Aug 2022</p>
