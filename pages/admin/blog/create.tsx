@@ -25,6 +25,7 @@ import { CategoryBlog } from "@/interfaces/listBlogs.interface";
 import { uploadMedia } from "@/services/upload";
 import { slugger } from "@/utils/slugger";
 import { useSession } from "next-auth/react";
+import { enqueueSnackbar } from "notistack";
 
 export default function CreateBlogPost({
   categories,
@@ -74,11 +75,11 @@ export default function CreateBlogPost({
         },
       },
       onCompleted: () => {
-        alert("Post is created!");
+        enqueueSnackbar("Post is created!", { variant: "success" });
         clearForm();
       },
       onError: () => {
-        alert("Failed post blog!");
+        enqueueSnackbar("Failed post blog!", { variant: "error" });
       },
     });
   };
