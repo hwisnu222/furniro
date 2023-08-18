@@ -70,7 +70,7 @@ export default function CreateBlogPost({
           category_blog: category,
           image: idMedia,
           slug: slugger(title),
-          users_permissions_user: session.id,
+          users_permissions_user: session.data?.user.id,
         },
       },
       onCompleted: () => {
