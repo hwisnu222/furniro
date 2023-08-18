@@ -18,55 +18,85 @@ import {
   ADD_PROFILE,
   UPDATE_PROFILE,
 } from "@/graphql/mutations/profile.mutation";
+import { enqueueSnackbar } from "notistack";
+
 const formInput = [
   {
     label: "First Name",
     field: "firstname",
+    type: "text",
   },
   {
     label: "Last Name",
     field: "lastname",
+    type: "text",
   },
   {
     label: "Company",
     field: "company",
+    type: "text",
   },
   {
     label: "Country",
     field: "country",
+    type: "text",
   },
   {
     label: "Street",
     field: "street",
+    type: "text",
   },
   {
     label: "City",
     field: "city",
+    type: "text",
   },
   {
     label: "Zip Code",
     field: "zip_code",
+    type: "number",
   },
   {
     label: "Phone",
     field: "phone",
+    type: "text",
   },
   {
     label: "Additional",
     field: "additional",
+    type: "text",
   },
 ];
+
+const infoMutation = {
+  success: "Profile has updated!",
+  error: "failed update profile!",
+};
 
 interface FormInputField {
   label: string;
   field: string;
+  type: string;
 }
+
+const initialForm = {
+  firstname: "",
+  lastname: "",
+  company: "",
+  country: "",
+  street: "",
+  city: "",
+  zip_code: 0,
+  phone: "",
+  additional: "",
+};
 
 export default function Profile() {
   const session = useSession();
   const [showEdit, setShowEdit] = React.useState(false);
-  const [form, setForm] = React.useState({});
-  const { data } = useQuery(GET_PROFILE, {
+  const [form, setForm] = React.useState(initialForm);
+  const { data, refetch } = useQuery(GET_PROFILE, {
+    fetchPolicy: "cache-and-network",
     variables: {
       filters: {
         users_permissions_user: {
@@ -75,8 +105,22 @@ export default function Profile() {
       },
     },
     onCompleted: (data) => {
-      if (data.profile.data) {
-        setForm(data.profiles.data[0]);
+      if (data.profiles.data?.length) {
+        let dataForm = data.profiles.data[0].attributes;
+        setForm({
+          ...form,
+          ...{
+            firstname: dataForm.firstname,
+            lastname: dataForm.lastname,
+            company: dataForm.company,
+            country: dataForm.country,
+            street: dataForm.country,
+            city: dataForm.city,
+            zip_code: dataForm.zip_code,
+            phone: dataForm.phone,
+            additional: dataForm.additional,
+          },
+        });
       }
     },
   });
@@ -99,10 +143,22 @@ export default function Profile() {
   };
 
   const handleSaveProfile = () => {
-    if (data.profile.data) {
+    setShowEdit((prev: boolean) => !prev);
+    if (data.profiles?.data?.length) {
+      const tempForm = form;
+      tempForm.zip_code = parseInt(form.zip_code as unknown as string);
+
       return updateProfile({
         variables: {
           data: form,
+          id: data.profiles.data[0]?.id,
+        },
+        onCompleted: () => {
+          refetch();
+          enqueueSnackbar(infoMutation.success, { variant: "success" });
+        },
+        onError: () => {
+          enqueueSnackbar(infoMutation.error, { variant: "error" });
         },
       });
     }
@@ -113,6 +169,13 @@ export default function Profile() {
           ...form,
           users_permissions_user: session.data?.user.id,
         },
+      },
+      onCompleted: () => {
+        refetch();
+        enqueueSnackbar(infoMutation.success, { variant: "success" });
+      },
+      onError: () => {
+        enqueueSnackbar(infoMutation.error, { variant: "error" });
       },
     });
   };
@@ -152,6 +215,30 @@ export default function Profile() {
                 <td className="tw-py-6 md:tw-w-1/3">{formInput[2].label}</td>
                 <td>{profile?.company}</td>
               </tr>
+              <tr className="tw-p-8">
+                <td className="tw-py-6 md:tw-w-1/3">{formInput[3].label}</td>
+                <td>{profile?.country}</td>
+              </tr>
+              <tr className="tw-p-8">
+                <td className="tw-py-6 md:tw-w-1/3">{formInput[4].label}</td>
+                <td>{profile?.street}</td>
+              </tr>
+              <tr className="tw-p-8">
+                <td className="tw-py-6 md:tw-w-1/3">{formInput[5].label}</td>
+                <td>{profile?.city}</td>
+              </tr>
+              <tr className="tw-p-8">
+                <td className="tw-py-6 md:tw-w-1/3">{formInput[6].label}</td>
+                <td>{profile?.zip_code}</td>
+              </tr>
+              <tr className="tw-p-8">
+                <td className="tw-py-6 md:tw-w-1/3">{formInput[7].label}</td>
+                <td>{profile?.phone}</td>
+              </tr>
+              <tr className="tw-p-8">
+                <td className="tw-py-6 md:tw-w-1/3">{formInput[8].label}</td>
+                <td>{profile?.additional}</td>
+              </tr>
             </tbody>
           </table>
         )}
@@ -160,12 +247,13 @@ export default function Profile() {
             <Stack direction="column" gap={2} className="tw-mb-8 md:tw-w-1/2">
               {formInput.map((input: FormInputField, index: number) => (
                 <TextField
-                  value={form[input.field]}
+                  value={form[input.field as keyof typeof form]}
                   onChange={handleOnChange}
                   key={`input-${index}`}
                   className="tw-f-w-full"
                   name={input.field}
                   label={input.label}
+                  type={input.type}
                 />
               ))}
             </Stack>
