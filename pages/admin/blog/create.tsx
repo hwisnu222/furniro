@@ -37,7 +37,7 @@ export default function CreateBlogPost({
   const [title, setTitle] = React.useState("");
   const [file, setFile] = React.useState<any | null>(null);
 
-  const [createPostBlog] = useMutation(CREATE_POST_BLOG);
+  const [createPostBlog, { loading }] = useMutation(CREATE_POST_BLOG);
 
   const handleSelectCategory = (event: SelectChangeEvent) => {
     setCategory(event.target.value as string);
@@ -93,6 +93,7 @@ export default function CreateBlogPost({
             className="tw-bg-default-200"
             size="large"
             onClick={createPost}
+            disabled={loading}
           >
             Publish
           </Button>

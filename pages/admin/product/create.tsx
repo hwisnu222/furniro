@@ -134,7 +134,7 @@ export default function CreatePostProduct({
   const editorRef = React.useRef(null);
   const [state, dispatch] = React.useReducer(reducerFunction, initialState);
 
-  const [mutate] = useMutation(CREATE_PRODUCT);
+  const [mutate, { loading }] = useMutation(CREATE_PRODUCT);
   const uploadFile = async () => {
     return await Promise.all(
       state.file.map(async (image: any) => {
@@ -218,6 +218,7 @@ export default function CreatePostProduct({
             className="tw-bg-default-200"
             size="large"
             onClick={submitPost}
+            disabled={loading}
           >
             Publish
           </Button>
