@@ -55,8 +55,9 @@ export default function HeaderAdmin() {
             "aria-labelledby": "basic-button",
           }}
         >
-          <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
-          <MenuItem onClick={handleCloseMenu}>My account</MenuItem>
+          <Link href="/user/profile">
+            <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
+          </Link>
           <MenuItem onClick={handleSignOut}>Logout</MenuItem>
         </Menu>
       </div>
