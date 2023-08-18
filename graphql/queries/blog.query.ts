@@ -48,6 +48,54 @@ export const GET_BLOGS = gql`
   }
 `;
 
+export const GET_RECENT_BLOGS = gql`
+  query getRecentBlogs {
+    blogs(pagination: { limit: 5 }, sort: "createdAt:desc") {
+      data {
+        id
+        attributes {
+          slug
+          title
+          article
+          category_blog {
+            data {
+              attributes {
+                category
+              }
+            }
+          }
+          image {
+            data {
+              id
+              attributes {
+                url
+              }
+            }
+          }
+          users_permissions_user {
+            data {
+              id
+              attributes {
+                username
+              }
+            }
+          }
+          createdAt
+          updatedAt
+        }
+      }
+      meta {
+        pagination {
+          total
+          page
+          pageSize
+          pageCount
+        }
+      }
+    }
+  }
+`;
+
 export const CREATE_POST_BLOG = gql`
   mutation createBlog($data: BlogInput!) {
     createBlog(data: $data) {
@@ -58,6 +106,7 @@ export const CREATE_POST_BLOG = gql`
   }
 `;
 
+// use: create post blog
 export const GET_CATEGORY_BLOG = gql`
   query getCategoryBlog {
     categoryBlogs {
@@ -65,6 +114,27 @@ export const GET_CATEGORY_BLOG = gql`
         id
         attributes {
           category
+        }
+      }
+    }
+  }
+`;
+
+// use: blog list user
+export const GET_CATEGORY_BLOGS = gql`
+  query getCategoryBlogs {
+    categoryBlogs {
+      data {
+        id
+        attributes {
+          category
+          blogs {
+            data {
+              id
+            }
+          }
+          createdAt
+          updatedAt
         }
       }
     }

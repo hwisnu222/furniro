@@ -18,17 +18,21 @@ import {
 } from "@mui/icons-material";
 
 import client from "@/graphql/client";
-import { GET_BLOGS } from "@/graphql/queries/blog.query";
+import {
+  GET_BLOGS,
+  GET_CATEGORY_BLOGS,
+  GET_RECENT_BLOGS,
+} from "@/graphql/queries/blog.query";
 
 import { ListBlogProps } from "@/interfaces/listBlogs.interface";
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { formatDate } from "@/utils/date";
+import { categoryBlogItem } from "@/interfaces/categoryBlog.interface";
 
 export default function Blog({ blogs }: { blogs: ListBlogProps[] }) {
   const [blogsList, setBlogList] = React.useState(blogs || []);
   const [search, setSearch] = React.useState("");
-  console.log(blogsList[0].attributes.image.data.attributes.url);
 
   const [getBlogs] = useLazyQuery(GET_BLOGS, {
     variables: {
@@ -38,6 +42,8 @@ export default function Blog({ blogs }: { blogs: ListBlogProps[] }) {
       setBlogList(data.blogs.data);
     },
   });
+  const { data: dataRecentBlogs } = useQuery(GET_RECENT_BLOGS);
+  const { data: categoryBlogs } = useQuery(GET_CATEGORY_BLOGS);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
@@ -115,29 +121,44 @@ export default function Blog({ blogs }: { blogs: ListBlogProps[] }) {
             <div className="tw-p-4">
               <h3 className="tw-text-2xl tw-font-bold">Categories</h3>
               <ul className="tw-mb-8 tw-text-gray-400">
-                {Array.from({ length: 5 }).map((category, index) => (
-                  <li
-                    className="cursor-pointer tw-flex tw-justify-between tw-py-4 hover:tw-text-gray-600"
-                    key={`category-${index}`}
-                  >
-                    <span>Category</span>
-                    <span>0</span>
-                  </li>
-                ))}
+                {categoryBlogs?.categoryBlogs.data?.map(
+                  (category: categoryBlogItem, index: number) => (
+                    <li
+                      className="cursor-pointer tw-flex tw-justify-between tw-py-4 hover:tw-text-gray-600"
+                      key={`category-${index}`}
+                    >
+                      <span>{category.attributes.category}</span>
+                      <span>{category.attributes.blogs.data?.length || 0}</span>
+                    </li>
+                  ),
+                )}
               </ul>
 
               <h3 className="tw-mb-4 tw-text-2xl tw-font-bold">Recent Posts</h3>
-              <div className="tw-flex tw-items-center tw-gap-4">
-                {/* <Image
+              <div className="tw-flex tw-flex-col tw-gap-4">
+                {dataRecentBlogs.blogs.data.map(
+                  (blog: ListBlogProps, index: number) => (
+                    <div
+                      className="tw-flex tw-items-center tw-gap-4"
+                      key={`recent-post-${index}`}
+                    >
+                      {/* <Image
                   src={FunitureImg}
                   alt="thumbnail-recent"
                   fill={false}
                   className="tw-h-20 tw-w-20 tw-rounded-sm"
                 /> */}
-                <div>
-                  <p className="tw-cursor-pointer">Lorem ipsum dolom</p>
-                  <p className="tw-text-sm tw-text-gray-400">03 Aug 2022</p>
-                </div>
+                      <div>
+                        <p className="tw-cursor-pointer">
+                          {blog.attributes.title}
+                        </p>
+                        <p className="tw-text-sm tw-text-gray-400">
+                          {formatDate(blog.attributes.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                  ),
+                )}
               </div>
             </div>
           </div>
