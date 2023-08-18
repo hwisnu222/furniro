@@ -11,8 +11,10 @@ import {
   MenuItem,
   Typography,
   Box,
+  Divider,
 } from "@mui/material";
 import { signOut, useSession } from "next-auth/react";
+import { ROLE } from "@/constants";
 
 export default function HeaderAdmin() {
   const session = useSession();
@@ -30,6 +32,11 @@ export default function HeaderAdmin() {
       callbackUrl: "/auth/login",
     });
   };
+
+  const pathDashboard =
+    session.data?.user.role === ROLE.Admin
+      ? "/admin/product/list"
+      : "/user/transaction";
   return (
     <div>
       <div className="tw-sticky tw-top-0 tw-z-30 tw-flex tw-items-center tw-justify-between tw-border-b tw-border-default-100 tw-bg-white tw-p-4">
@@ -55,6 +62,10 @@ export default function HeaderAdmin() {
             "aria-labelledby": "basic-button",
           }}
         >
+          <Link href={pathDashboard}>
+            <MenuItem onClick={handleCloseMenu}>Dashboard</MenuItem>
+          </Link>
+          <Divider />
           <Link href="/user/profile">
             <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
           </Link>
