@@ -87,7 +87,7 @@ export default function Blog({ blogs }: { blogs: ListBlogProps[] }) {
                   </section>
                 </div>
                 <div className="tw-p-2">
-                  <h3 className="te-font-bold tw-text-2xl">
+                  <h3 className="te-font-bold tw-text-2xl tw-capitalize">
                     {post.attributes.title}
                   </h3>
                   <div
@@ -136,7 +136,7 @@ export default function Blog({ blogs }: { blogs: ListBlogProps[] }) {
 
               <h3 className="tw-mb-4 tw-text-2xl tw-font-bold">Recent Posts</h3>
               <div className="tw-flex tw-flex-col tw-gap-4">
-                {dataRecentBlogs.blogs.data.map(
+                {dataRecentBlogs?.blogs.data.map(
                   (blog: ListBlogProps, index: number) => (
                     <div
                       className="tw-flex tw-items-center tw-gap-4"
@@ -149,9 +149,11 @@ export default function Blog({ blogs }: { blogs: ListBlogProps[] }) {
                   className="tw-h-20 tw-w-20 tw-rounded-sm"
                 /> */}
                       <div>
-                        <p className="tw-cursor-pointer">
-                          {blog.attributes.title}
-                        </p>
+                        <Link href={`/single-blog/${blog.attributes.slug}`}>
+                          <p className="tw-cursor-pointer tw-capitalize hover:tw-text-gray-500">
+                            {blog.attributes.title}
+                          </p>
+                        </Link>{" "}
                         <p className="tw-text-sm tw-text-gray-400">
                           {formatDate(blog.attributes.createdAt)}
                         </p>

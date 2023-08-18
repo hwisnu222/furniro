@@ -15,7 +15,7 @@ export default function SingleProduct({ post }: { post: ListBlogProps }) {
     <>
       <Header />
       <Container className="tw-py-8">
-        <Typography className="tw-mb-4" variant="h4">
+        <Typography className="tw-mb-4 tw-capitalize" variant="h4">
           {post.attributes.title}
         </Typography>
         <Box className="tw-flex tw-justify-center">
