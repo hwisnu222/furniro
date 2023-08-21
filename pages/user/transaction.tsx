@@ -16,7 +16,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_TRANSACTIONS } from "@/graphql/queries/transaction.query";
 import { useSession } from "next-auth/react";
 import { TransactionItem } from "@/interfaces/transaction.interface";
@@ -24,11 +24,15 @@ import { formatDate } from "@/utils/date";
 import NotList from "@/components/notFound/NotList";
 import { CartItem } from "@/interfaces/cart.interface";
 import { Delete, MoreVert } from "@mui/icons-material";
+import { enqueueSnackbar } from "notistack";
+import { DELETE_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
 
 export default function Transaction() {
   const session = useSession();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const [deleteTransaction] = useMutation(DELETE_TRANSACTION);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -37,7 +41,7 @@ export default function Transaction() {
     setAnchorEl(null);
   };
 
-  const { data } = useQuery(GET_TRANSACTIONS, {
+  const { data, refetch } = useQuery(GET_TRANSACTIONS, {
     variables: {
       filters: {
         users_permissions_user: {
@@ -48,6 +52,22 @@ export default function Transaction() {
       },
     },
   });
+
+  const handleDelete = (id: number) => {
+    handleClose();
+    deleteTransaction({
+      variables: {
+        id,
+      },
+      onCompleted: () => {
+        refetch();
+        enqueueSnackbar("Transaction has deleted!", { variant: "success" });
+      },
+      onError: () => {
+        enqueueSnackbar("Failed delete transaction", { variant: "error" });
+      },
+    });
+  };
 
   return (
     <DashboardUserLayout>
@@ -121,7 +141,7 @@ export default function Transaction() {
                             <MenuItem onClick={handleClose}>Detail</MenuItem>
                             <MenuItem
                               className="tw-text-red-800"
-                              onClick={handleClose}
+                              onClick={() => handleDelete(transaction.id)}
                             >
                               Hapus
                             </MenuItem>
