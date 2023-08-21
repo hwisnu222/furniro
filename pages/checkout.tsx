@@ -29,12 +29,6 @@ import { STATUS_TRANSACTION } from "@/constants";
 import { GET_PROFILE } from "@/graphql/queries/profile.query";
 import { enqueueSnackbar } from "notistack";
 
-interface CartDataQuery {
-  carts: {
-    data: CartItem[];
-  };
-}
-
 export default function Checkout() {
   const session = useSession();
   const { data } = useQuery(GET_CARTS, {
@@ -78,6 +72,7 @@ export default function Checkout() {
         },
       },
     },
+    onCompleted: (cartData) => {},
   });
   console.log({ dataCarts });
 
