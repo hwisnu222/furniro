@@ -33,7 +33,7 @@ export default function Shop() {
   );
 
   const sort = params.get("s");
-  const [order, setOrder] = React.useState(sort || "highest");
+  const [order, setOrder] = React.useState(sort || "asc");
 
   const createQuery = React.useCallback(
     (param: any, value: string) => {
@@ -47,6 +47,7 @@ export default function Shop() {
     fetchPolicy: "cache-and-network",
     variables: {
       filter: search.get("search") || "",
+      sort: `price:${order}`,
     },
   });
   const products = React.useMemo(() => data?.products?.data, [data]);
@@ -77,8 +78,8 @@ export default function Shop() {
           <Stack direction="row" alignItems="center" gap={2}>
             <span>Short By</span>
             <Select value={order} onChange={handleOrder} size="small">
-              <MenuItem value="lowest">Lowest Price</MenuItem>
-              <MenuItem value="highest">Highest Price</MenuItem>
+              <MenuItem value="asc">Lowest Price</MenuItem>
+              <MenuItem value="desc">Highest Price</MenuItem>
             </Select>
           </Stack>
         </Stack>
