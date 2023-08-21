@@ -278,7 +278,7 @@ export default function Header() {
                 {convertCurrency(getTotalPrice(carts))}
               </p>
             </div>
-            <Stack direction="row" justifyContent="space-between">
+            <Stack direction="row" justifyContent="space-between" gap={2}>
               <Button
                 component={Link}
                 href="/cart"
@@ -289,6 +289,7 @@ export default function Header() {
                 Cart
               </Button>
               <Button
+                disabled={!carts?.length}
                 component={Link}
                 href="/checkout"
                 variant="outlined"

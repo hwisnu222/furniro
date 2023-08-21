@@ -1,6 +1,8 @@
 import React from "react";
 import client from "@/graphql/client";
 import { useMutation } from "@apollo/client";
+import { enqueueSnackbar } from "notistack";
+import { useSession } from "next-auth/react";
 
 import {
   Breadcrumbs,
@@ -19,19 +21,18 @@ import Image from "@/components/images/Image";
 import { AddOutlined, Edit } from "@mui/icons-material";
 
 import { GET_PRODUCT, GET_PRODUCTS } from "@/graphql/queries/product.query";
+import { ADD_CART } from "@/graphql/mutations/cart.mutation";
 
 import Footer from "@/components/footers/Footer";
 import Header from "@/components/headers/Header";
 import ProductLayout from "@/components/layouts/ProductLayout";
 import Products from "@/components/cards/Products";
 import Container from "@/components/layouts/Container";
-
-import FurnitureImg from "../../assets/images/furniture.png";
-import { convertCurrency } from "@/utils/currency";
-import { ADD_CART } from "@/graphql/mutations/cart.mutation";
-import { ItemProduct } from "@/interfaces/product.interface";
 import RoleComponent from "@/components/authorization/RoleComponent";
+
 import { ROLE } from "@/constants";
+import { convertCurrency } from "@/utils/currency";
+import { ItemProduct } from "@/interfaces/product.interface";
 
 const DescriptionPanel = ({ description }: { description: string }) => {
   return (
@@ -66,6 +67,7 @@ export default function SingleProduct({
   product: ItemProduct;
   products: ItemProduct[];
 }) {
+  const session = useSession();
   const [tab, setTab] = React.useState("description");
   const [buyTotal, setBuyTotal] = React.useState(0);
 
@@ -77,13 +79,14 @@ export default function SingleProduct({
         data: {
           total: buyTotal,
           product: id,
+          users_permissions_user: session.data?.user.id,
         },
       },
       onCompleted: () => {
-        alert("Product has added to cart");
+        enqueueSnackbar("Product has added to cart", { variant: "success" });
       },
       onError: () => {
-        alert("failed add product to cart");
+        enqueueSnackbar("failed add product to cart", { variant: "error" });
       },
     });
   };

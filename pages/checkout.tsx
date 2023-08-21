@@ -67,7 +67,7 @@ export default function Checkout() {
 
   const [createTransaction] = useMutation(ADD_TRANSACTION);
   const [updateCarts] = useMutation(UPDATE_CARTS);
-  const [getCarts] = useLazyQuery(GET_CARTS, {
+  const { data: dataCarts, refetch } = useQuery(GET_CARTS, {
     variables: {
       filters: {
         users_permissions_user: {
@@ -79,35 +79,58 @@ export default function Checkout() {
       },
     },
   });
+  console.log({ dataCarts });
 
   const updateTransactionToCart = async (transaction: number) => {
-    getCarts({
-      onCompleted: async (cartData: CartDataQuery) => {
-        const idCarts = cartData?.carts.data.map((cart: CartItem) => cart.id);
-        if (idCarts.length) {
-          const updateAllCarts = await Promise.all(
-            idCarts.map((id: number) => {
-              return updateCarts({
-                variables: {
-                  data: {
-                    transaction,
-                  },
-                  id,
-                },
-              });
-            }),
-          );
+    const idCarts = dataCarts?.carts.data.map((cart: CartItem) => cart.id);
+    if (idCarts.length) {
+      const updateAllCarts = await Promise.all(
+        idCarts.map((id: number) => {
+          return updateCarts({
+            variables: {
+              data: {
+                transaction,
+              },
+              id,
+            },
+          });
+        }),
+      );
 
-          console.log(updateAllCarts);
-          enqueueSnackbar("Transaction has created!", { variant: "success" });
-          return;
-        }
-        enqueueSnackbar("You haven't carts!", { variant: "error" });
-      },
-      onError: () => {
-        enqueueSnackbar("Failed create transaction!", { variant: "error" });
-      },
-    });
+      console.log(updateAllCarts);
+      refetch();
+      enqueueSnackbar("Transaction has created!", { variant: "success" });
+      return;
+    }
+    enqueueSnackbar("You haven't carts!", { variant: "error" });
+
+    // getCarts({
+    //   onCompleted: async (cartData: CartDataQuery) => {
+    //     const idCarts = cartData?.carts.data.map((cart: CartItem) => cart.id);
+    //     if (idCarts.length) {
+    //       const updateAllCarts = await Promise.all(
+    //         idCarts.map((id: number) => {
+    //           return updateCarts({
+    //             variables: {
+    //               data: {
+    //                 transaction,
+    //               },
+    //               id,
+    //             },
+    //           });
+    //         }),
+    //       );
+
+    //       console.log(updateAllCarts);
+    //       enqueueSnackbar("Transaction has created!", { variant: "success" });
+    //       return;
+    //     }
+    //     enqueueSnackbar("You haven't carts!", { variant: "error" });
+    //   },
+    //   onError: () => {
+    //     enqueueSnackbar("Failed create transaction!", { variant: "error" });
+    //   },
+    // });
   };
 
   const handleCheckoutCart = () => {
@@ -265,8 +288,14 @@ export default function Checkout() {
               other purposes described in our privacy policy.
             </p>
             <div className="tw-flex tw-items-center tw-justify-center">
-              <Button variant="outlined" onClick={handleCheckoutCart}>
-                Place order
+              <Button
+                variant="outlined"
+                onClick={handleCheckoutCart}
+                disabled={!dataCarts?.carts.data?.length}
+              >
+                Place order{" "}
+                {dataCarts?.carts.data?.length &&
+                  `${dataCarts?.carts.data?.length} product`}
               </Button>
             </div>
           </div>
