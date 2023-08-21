@@ -83,6 +83,11 @@ export default function Header() {
             eq: session.data?.user.id,
           },
         },
+        transaction: {
+          id: {
+            eq: null,
+          },
+        },
       },
     },
     fetchPolicy: "cache-and-network",

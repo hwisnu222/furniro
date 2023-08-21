@@ -1,6 +1,6 @@
 import React from "react";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   TextField,
@@ -29,18 +29,49 @@ import { STATUS_TRANSACTION } from "@/constants";
 
 export default function Checkout() {
   const session = useSession();
-  const { data } = useQuery(GET_CARTS);
+  const { data } = useQuery(GET_CARTS, {
+    variables: {
+      filters: {
+        users_permissions_user: {
+          id: { eq: session.data?.user.id },
+        },
+        transaction: {
+          id: null,
+        },
+      },
+    },
+  });
 
   const [createTransaction] = useMutation(ADD_TRANSACTION);
   const [updateCarts] = useMutation(UPDATE_CARTS);
-
-  const updateTransactionToCart = (transaction: any) => {
-    updateCarts({
-      variables: {
-        data: {},
-        ids: [],
+  const [getCarts, { data: cartData }] = useLazyQuery(GET_CARTS, {
+    variables: {
+      filters: {
+        users_permissions_user: {
+          id: { eq: session.data?.user.id },
+        },
+        transaction: {
+          id: null,
+        },
       },
-    });
+    },
+  });
+
+  const updateTransactionToCart = async (transaction: number) => {
+    const idCarts = cartData.carts.data.map((cart: CartItem) => cart.id);
+    const updateAllCarts = await Promise.all(
+      idCarts.map((id: number) => {
+        return updateCarts({
+          variables: {
+            data: {
+              transaction,
+            },
+            id,
+          },
+        });
+      }),
+    );
+    console.log(updateAllCarts);
   };
 
   const handleCheckoutCart = () => {
@@ -52,8 +83,8 @@ export default function Checkout() {
         },
       },
       onCompleted: (data) => {
-        console.log(data);
-        // updateTransactionToCart(data);
+        getCarts();
+        updateTransactionToCart(data.createTransaction?.data.id);
       },
     });
   };
