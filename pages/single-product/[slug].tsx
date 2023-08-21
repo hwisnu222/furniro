@@ -36,10 +36,10 @@ import { ROLE } from "@/constants";
 const DescriptionPanel = ({ description }: { description: string }) => {
   return (
     <Container>
-      <p
+      <div
         className="tw-text-gray-400"
         dangerouslySetInnerHTML={{ __html: description }}
-      ></p>
+      ></div>
     </Container>
   );
 };
@@ -183,7 +183,7 @@ export default function SingleProduct({
             </>
           )}
 
-          {product?.attributes.color?.length && (
+          {!!product?.attributes.color?.length && (
             <>
               <h3 className="tw-mb-2 tw-font-semibold tw-text-gray-400">
                 Color
