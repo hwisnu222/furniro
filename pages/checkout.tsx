@@ -29,6 +29,12 @@ import { STATUS_TRANSACTION } from "@/constants";
 import { GET_PROFILE } from "@/graphql/queries/profile.query";
 import { enqueueSnackbar } from "notistack";
 
+interface CartDataQuery {
+  carts: {
+    data: CartItem[];
+  };
+}
+
 export default function Checkout() {
   const session = useSession();
   const { data } = useQuery(GET_CARTS, {
@@ -61,7 +67,7 @@ export default function Checkout() {
 
   const [createTransaction] = useMutation(ADD_TRANSACTION);
   const [updateCarts] = useMutation(UPDATE_CARTS);
-  const [getCarts, { data: cartData }] = useLazyQuery(GET_CARTS, {
+  const [getCarts] = useLazyQuery(GET_CARTS, {
     variables: {
       filters: {
         users_permissions_user: {
@@ -72,12 +78,11 @@ export default function Checkout() {
         },
       },
     },
-    onCompleted: (cartData) => {},
   });
 
   const updateTransactionToCart = async (transaction: number) => {
     getCarts({
-      onCompleted: async (cartData) => {
+      onCompleted: async (cartData: CartDataQuery) => {
         const idCarts = cartData?.carts.data.map((cart: CartItem) => cart.id);
         if (idCarts.length) {
           const updateAllCarts = await Promise.all(
