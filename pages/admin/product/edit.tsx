@@ -215,10 +215,10 @@ export default function CreatePostProduct({
       });
     }
 
-    dispatch({
-      type: Type.DESCRIPTION,
-      payload: editorRef.current?.getContent(),
-    });
+    // dispatch({
+    //   type: Type.DESCRIPTION,
+    //   payload: editorRef.current?.getContent(),
+    // });
 
     // check if image is replace or not
     const variables = state;
@@ -229,6 +229,7 @@ export default function CreatePostProduct({
 
     delete variables.file;
     variables.slug = slugger(variables.name);
+    variables.description = editorRef.current?.getContent();
 
     mutate({
       variables: {
@@ -251,7 +252,7 @@ export default function CreatePostProduct({
   return (
     <DashboardLayout>
       <HeaderCard
-        title="Create Product"
+        title="Edit Product"
         rightAction={
           <Button
             variant="contained"
