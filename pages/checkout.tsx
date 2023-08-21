@@ -26,6 +26,7 @@ import { convertCurrency } from "@/utils/currency";
 import { ADD_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
 import { UPDATE_CARTS } from "@/graphql/mutations/cart.mutation";
 import { STATUS_TRANSACTION } from "@/constants";
+import { GET_PROFILE } from "@/graphql/queries/profile.query";
 
 export default function Checkout() {
   const session = useSession();
@@ -42,6 +43,21 @@ export default function Checkout() {
     },
   });
 
+  const { data: dataProfile } = useQuery(GET_PROFILE, {
+    variables: {
+      filters: {
+        users_permissions_user: {
+          id: {
+            eq: session.data?.user.id,
+          },
+        },
+      },
+    },
+  });
+
+  console.log(dataProfile);
+  const profile = dataProfile?.profiles?.data[0];
+
   const [createTransaction] = useMutation(ADD_TRANSACTION);
   const [updateCarts] = useMutation(UPDATE_CARTS);
   const [getCarts, { data: cartData }] = useLazyQuery(GET_CARTS, {
@@ -51,7 +67,7 @@ export default function Checkout() {
           id: { eq: session.data?.user.id },
         },
         transaction: {
-          id: null,
+          id: { eq: null },
         },
       },
     },
@@ -103,18 +119,57 @@ export default function Checkout() {
           <div>
             <div className="tw-flex tw-flex-col tw-gap-4">
               <div className="tw-flex tw-w-full tw-gap-2 ">
-                <TextField label="First Name" />
-                <TextField label="Last Name" />
+                <TextField
+                  placeholder="First Name"
+                  value={profile?.attributes.firstname}
+                  disabled
+                />
+                <TextField
+                  placeholder="Last Name"
+                  value={profile?.attributes.lastname}
+                  disabled
+                />
               </div>
-              <TextField label="Company Name (optional)" />
-              <TextField label="Country / Region " />
-              <TextField label="Street Address " />
-              <TextField label="Town / City " />
-              <TextField label="Province" />
-              <TextField label="ZIP Code" />
-              <TextField label="Phone" />
-              <TextField label="Email Address" />
-              <TextField placeholder="Additional information" />
+              <TextField
+                placeholder="Company Name (optional)"
+                value={profile?.attributes.company}
+                disabled
+              />
+              <TextField
+                placeholder="Country / Region "
+                value={profile?.attributes.country}
+                disabled
+              />
+              <TextField
+                placeholder="Street Address "
+                value={profile?.attributes.street}
+                disabled
+              />
+              <TextField
+                placeholder="Town / City "
+                value={profile?.attributes.city}
+                disabled
+              />
+              <TextField
+                placeholder="Province"
+                value={profile?.attributes.province}
+                disabled
+              />
+              <TextField
+                placeholder="ZIP Code"
+                value={profile?.attributes.zip_code}
+                disabled
+              />
+              <TextField
+                placeholder="Phone"
+                value={profile?.attributes.phone}
+                disabled
+              />
+              <TextField
+                placeholder="Additional information"
+                value={profile?.attributes.additional}
+                disabled
+              />
             </div>
           </div>
           <div>
