@@ -34,6 +34,7 @@ export default function Shop() {
 
   const sort = params.get("s");
   const [order, setOrder] = React.useState(sort || "asc");
+  const [filters, setFilter] = React.useState({});
 
   const createQuery = React.useCallback(
     (param: any, value: string) => {
@@ -43,14 +44,24 @@ export default function Shop() {
     [params],
   );
 
-  const { data } = useQuery(GET_PRODUCTS, {
+  const { data, refetch } = useQuery(GET_PRODUCTS, {
     fetchPolicy: "cache-and-network",
     variables: {
-      filter: search.get("search") || "",
+      filters: {
+        name: {
+          containsi: search.get("search") || "",
+        },
+        or: filters,
+      },
       sort: `price:${order}`,
     },
   });
   const products = React.useMemo(() => data?.products?.data, [data]);
+
+  const handleOnApply = (data: any) => {
+    setFilter(data);
+    refetch();
+  };
 
   const handleOrder = (event: SelectChangeEvent) => {
     const value = event.target.value as string;
@@ -65,9 +76,12 @@ export default function Shop() {
 
       <div className="tw-mb-8 tw-flex tw-flex-col tw-items-center tw-gap-4 tw-bg-default-100 tw-p-2 md:tw-flex-row md:tw-justify-around">
         <Stack direction="row" gap={2} alignItems="center">
-          <Filter />
+          <Filter onApply={handleOnApply} />
 
-          <span>Showing 1-18 of 32 results</span>
+          <span>
+            Showing {products?.length} of {data?.products.meta.pagination.total}{" "}
+            results
+          </span>
         </Stack>
 
         <Stack direction="row" gap={4}>
@@ -87,7 +101,7 @@ export default function Shop() {
       <Box className="tw-container tw-mx-auto tw-px-10">
         {!products?.length && <NotList />}
 
-        {products?.length && <Products data={products} />}
+        {!!products?.length && <Products data={products} />}
       </Box>
 
       <Benefite />
