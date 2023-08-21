@@ -21,8 +21,8 @@ export const ADD_CART = gql`
 `;
 
 export const UPDATE_CARTS = gql`
-  mutation updateCartToTransaction($data: CartInput!, $ids: ID!) {
-    updateCart(data: $data, id: $ids) {
+  mutation updateCartToTransaction($data: CartInput!, $id: ID!) {
+    updateCart(data: $data, id: $id) {
       data {
         id
       }
