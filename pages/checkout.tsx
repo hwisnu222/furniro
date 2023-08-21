@@ -27,6 +27,7 @@ import { ADD_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
 import { UPDATE_CARTS } from "@/graphql/mutations/cart.mutation";
 import { STATUS_TRANSACTION } from "@/constants";
 import { GET_PROFILE } from "@/graphql/queries/profile.query";
+import { enqueueSnackbar } from "notistack";
 
 export default function Checkout() {
   const session = useSession();
@@ -71,23 +72,37 @@ export default function Checkout() {
         },
       },
     },
+    onCompleted: (cartData) => {},
   });
 
   const updateTransactionToCart = async (transaction: number) => {
-    const idCarts = cartData.carts.data.map((cart: CartItem) => cart.id);
-    const updateAllCarts = await Promise.all(
-      idCarts.map((id: number) => {
-        return updateCarts({
-          variables: {
-            data: {
-              transaction,
-            },
-            id,
-          },
-        });
-      }),
-    );
-    console.log(updateAllCarts);
+    getCarts({
+      onCompleted: async (cartData) => {
+        const idCarts = cartData?.carts.data.map((cart: CartItem) => cart.id);
+        if (idCarts.length) {
+          const updateAllCarts = await Promise.all(
+            idCarts.map((id: number) => {
+              return updateCarts({
+                variables: {
+                  data: {
+                    transaction,
+                  },
+                  id,
+                },
+              });
+            }),
+          );
+
+          console.log(updateAllCarts);
+          enqueueSnackbar("Transaction has created!", { variant: "success" });
+          return;
+        }
+        enqueueSnackbar("You haven't carts!", { variant: "error" });
+      },
+      onError: () => {
+        enqueueSnackbar("Failed create transaction!", { variant: "error" });
+      },
+    });
   };
 
   const handleCheckoutCart = () => {
@@ -99,7 +114,6 @@ export default function Checkout() {
         },
       },
       onCompleted: (data) => {
-        getCarts();
         updateTransactionToCart(data.createTransaction?.data.id);
       },
     });
