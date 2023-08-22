@@ -45,7 +45,6 @@ export default function Products(props: {
     },
     onCompleted: (data) => {
       setWishlist(data.wishlists.data);
-      console.log(data.wishlists.data);
     },
   });
 

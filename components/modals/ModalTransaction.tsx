@@ -1,9 +1,17 @@
 import { CartItem } from "@/interfaces/cart.interface";
 import { TransactionItem } from "@/interfaces/transaction.interface";
-import { Modal, Box, Typography, Divider, Stack } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  Divider,
+  Stack,
+  IconButton,
+} from "@mui/material";
 import React from "react";
 import Image from "../images/Image";
 import { formatDate } from "@/utils/date";
+import { Close } from "@mui/icons-material";
 
 export default function ModalTransaction({
   transaction,
@@ -28,9 +36,14 @@ export default function ModalTransaction({
         className="tw-p-4 md:tw-p-20"
       >
         <Box className="tw-inline-block tw-h-full tw-w-full tw-overflow-x-auto tw-rounded-md tw-bg-white">
-          <Typography variant="h5" className=" tw-p-4">
-            Transaction Detail
-          </Typography>
+          <Box className="tw-flex tw-items-center tw-justify-between">
+            <Typography variant="h5" className=" tw-p-4">
+              Transaction Detail
+            </Typography>
+            <IconButton onClick={handleClose}>
+              <Close />
+            </IconButton>
+          </Box>
           <Divider />
           <Box className="tw-grid tw-grid-cols-2 tw-p-4">
             <Stack gap={2}>

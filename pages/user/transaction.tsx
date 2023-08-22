@@ -37,7 +37,7 @@ const StatusTypography = (props: {
   return (
     <Typography
       className={
-        props.status === "pending"
+        props.status === "process"
           ? "tw-text-orange-600"
           : props.status === "finish"
           ? "tw-text-green-600"
