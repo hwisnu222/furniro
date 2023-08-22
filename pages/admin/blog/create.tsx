@@ -62,6 +62,12 @@ export default function CreateBlogPost({
     const formData = new FormData();
     formData.append("files", file);
     const idMedia = await uploadMedia(formData);
+    if (!title || !category || !file) {
+      enqueueSnackbar("Title, category and image must filled!", {
+        variant: "error",
+      });
+      return;
+    }
 
     createPostBlog({
       variables: {
