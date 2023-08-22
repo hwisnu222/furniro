@@ -14,14 +14,8 @@ export default function DashboardUserLayout({
   const pathname = usePathname();
   const route = React.useMemo(() => pathname.split("/")[2], [pathname]);
 
-  const handleChangeTab = (event: React.SyntheticEvent, newValue: string) => {
-    switch (newValue) {
-      case "wishlist":
-        router.push("/user/wishlist");
-      default:
-        router.push("/user/transaction");
-        break;
-    }
+  const handleChangeTab = (event: React.SyntheticEvent, path: string) => {
+    router.push(`/user/${path}`);
   };
 
   return (
