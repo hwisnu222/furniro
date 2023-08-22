@@ -19,6 +19,9 @@ export default function DashboardLayout({
       case "blog":
         router.push("/admin/blog/list");
         break;
+      case "transaction":
+        router.push("/admin/transaction/list");
+        break;
 
       default:
         router.push("/admin/product/list");
@@ -32,6 +35,7 @@ export default function DashboardLayout({
       <Tabs className="tw-bg-white" value={route} onChange={handleChangeTab}>
         <Tab label="Product" value="product" />
         <Tab label="Blog" value="blog" />
+        <Tab label="Transaction" value="transaction" />
       </Tabs>
       <Container className="tw-py-4">
         <Card className="tw-p-4">{children}</Card>
