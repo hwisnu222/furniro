@@ -91,7 +91,6 @@ export default function Filter({ onApply }: { onApply: Function }) {
     setHighPrice("");
     setLowPrice("");
     setCategory("");
-    applyFilter();
   };
   return (
     <>
