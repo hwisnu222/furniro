@@ -1,4 +1,5 @@
 import { ImageItems } from "./image.interface";
+import { ReviewItem } from "./review.interface";
 
 export interface ItemProduct {
   id: number;
@@ -24,7 +25,9 @@ export interface ItemProduct {
     sku: string;
     rating: number;
     stock: number;
-    review: any;
+    reviews: {
+      data: ReviewItem[];
+    };
     additional?: string;
     createdAt: string;
     updatedAt: string;

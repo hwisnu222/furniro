@@ -37,6 +37,9 @@ export default function HeaderAdmin() {
     session.data?.user.role === ROLE.Admin
       ? "/admin/product/list"
       : "/user/transaction";
+
+  const pathProfile =
+    session.data?.user.role === ROLE.Admin ? "/admin/profile" : "/user/profile";
   return (
     <div>
       <div className="tw-sticky tw-top-0 tw-z-30 tw-flex tw-items-center tw-justify-between tw-border-b tw-border-default-100 tw-bg-white tw-p-4">
@@ -66,7 +69,7 @@ export default function HeaderAdmin() {
             <MenuItem onClick={handleCloseMenu}>Dashboard</MenuItem>
           </Link>
           <Divider />
-          <Link href="/user/profile">
+          <Link href={pathProfile}>
             <MenuItem onClick={handleCloseMenu}>Profile</MenuItem>
           </Link>
           <MenuItem onClick={handleSignOut}>Logout</MenuItem>

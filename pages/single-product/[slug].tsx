@@ -1,6 +1,6 @@
 import React from "react";
 import client from "@/graphql/client";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { enqueueSnackbar } from "notistack";
 import { useSession } from "next-auth/react";
 
@@ -16,6 +16,7 @@ import {
   IconButton,
   Tabs,
   Tab,
+  TextField,
 } from "@mui/material";
 import Image from "@/components/images/Image";
 import { AddOutlined, Edit } from "@mui/icons-material";
@@ -33,6 +34,10 @@ import RoleComponent from "@/components/authorization/RoleComponent";
 import { ROLE } from "@/constants";
 import { convertCurrency } from "@/utils/currency";
 import { ItemProduct } from "@/interfaces/product.interface";
+import { GET_REVIEWS } from "@/graphql/queries/review.query";
+import NotList from "@/components/notFound/NotList";
+import { CREATE_REVIEW } from "@/graphql/mutations/review.mutation";
+import { formatDate } from "@/utils/date";
 
 const DescriptionPanel = ({ description }: { description: string }) => {
   return (
@@ -45,6 +50,83 @@ const DescriptionPanel = ({ description }: { description: string }) => {
   );
 };
 
+const ReviewPanel = ({ idProduct }: { idProduct: number | string }) => {
+  const session = useSession();
+
+  const [review, setReview] = React.useState("");
+  const { data, refetch } = useQuery(GET_REVIEWS, {
+    variables: {
+      filters: {
+        product: {
+          id: { eq: idProduct },
+        },
+      },
+      sort: "createdAt:desc",
+    },
+  });
+  const [addReview] = useMutation(CREATE_REVIEW);
+
+  const handleAddreview = (event: React.KeyboardEvent) => {
+    if (event.code === "Enter") {
+      addReview({
+        variables: {
+          data: {
+            review,
+            product: idProduct,
+            users_permissions_user: session.data?.user.id,
+          },
+        },
+        onCompleted: () => {
+          refetch();
+          setReview("");
+          enqueueSnackbar("Review has added!", { variant: "success" });
+        },
+        onError: () => {
+          enqueueSnackbar("failed add review to product!", {
+            variant: "error",
+          });
+        },
+      });
+    }
+  };
+
+  const handleChangeReview = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setReview(event.target.value);
+  };
+
+  return (
+    <Box>
+      <TextField
+        value={review}
+        placeholder="Your review"
+        className="tw-mb-4 tw-w-full"
+        onChange={handleChangeReview}
+        onKeyDown={handleAddreview}
+      />
+      <Divider className="tw-mb-4" />
+      {!data?.reviews.data.length && <NotList />}
+      <Stack gap={2}>
+        {data?.reviews.data.map((review: any, index: number) => (
+          <Box key={`review-${index}`}>
+            <Box className="tw-flex tw-justify-between">
+              <Typography>
+                {review.attributes.users_permissions_user?.data.attributes
+                  .profile.data?.attributes.firstname || "Anonym"}
+              </Typography>
+              <Typography className="tw-text-sm tw-text-gray-400">
+                {formatDate(review.attributes.createdAt)}
+              </Typography>
+            </Box>
+            <Typography className="tw-text-sm tw-text-gray-400">
+              {review.attributes.review}
+            </Typography>
+          </Box>
+        ))}
+      </Stack>
+    </Box>
+  );
+};
+
 const TabPannel = (key: string, product: ItemProduct) => {
   switch (key) {
     case "additional":
@@ -52,7 +134,7 @@ const TabPannel = (key: string, product: ItemProduct) => {
         <p className="tw-text-gray-400">{product.attributes.additional}</p>
       );
     case "review":
-      return <p className="tw-text-gray-400">Review</p>;
+      return <ReviewPanel idProduct={product.id} />;
     default:
       return <DescriptionPanel description={product.attributes.description} />;
   }
@@ -276,11 +358,11 @@ export default function SingleProduct({
           <Tab value="additional" label="Additional Informations" />
           <Tab
             value="review"
-            label={`Reviews (${product.attributes.review?.length || 0})`}
+            label={`Reviews (${product.attributes.reviews?.data.length || 0})`}
           />
         </Tabs>
-        {TabPannel(tab, product)}
       </Container>
+      <Container>{TabPannel(tab, product)}</Container>
 
       <ProductLayout title="Related Products">
         <Products data={products} />

@@ -85,6 +85,14 @@ export const GET_PRODUCT = gql`
               }
             }
           }
+          reviews {
+            data {
+              id
+              attributes {
+                review
+              }
+            }
+          }
           createdAt
           updatedAt
         }
