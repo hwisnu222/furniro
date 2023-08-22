@@ -58,6 +58,7 @@ const ModalDetail = () => {
 };
 export default function List() {
   const [search, setSearch] = React.useState("");
+  const [page, setPage] = React.useState(0);
   const { data, refetch } = useQuery(GET_TRANSACTIONS, {
     variables: {
       filters: {
@@ -93,6 +94,10 @@ export default function List() {
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event?.target.value);
   };
+
+  const handleChangePage = (_: React.ChangeEvent<unknown>, page: number) => {
+    setPage(page);
+  };
   return (
     <DashboardLayout>
       <HeaderCard title="Transaction User" />
@@ -103,7 +108,7 @@ export default function List() {
         </p>
         <Box>
           <TextField
-            placeholder="Pending, process..."
+            placeholder="Search: Pending, process..."
             size="small"
             onChange={handleSearch}
           />
@@ -175,7 +180,16 @@ export default function List() {
       </TableContainer>
       <Divider />
       <Box className="tw-flex tw-justify-end tw-py-4">
-        <Pagination showFirstButton showLastButton />
+        <Pagination
+          showFirstButton
+          showLastButton
+          count={Math.floor(
+            data?.transactions.meta.pagination.total /
+              data?.transactions.meta.pagination.pageSize,
+          )}
+          page={page}
+          onChange={handleChangePage}
+        />
       </Box>
     </DashboardLayout>
   );
