@@ -85,10 +85,10 @@ export default function Shop() {
         </Stack>
 
         <Stack direction="row" gap={4}>
-          <Stack direction="row" alignItems="center" gap={2}>
+          {/* <Stack direction="row" alignItems="center" gap={2}>
             <span>Show</span>
             <TextField disabled size="small" className="tw-w-10" />
-          </Stack>
+          </Stack> */}
           <Stack direction="row" alignItems="center" gap={2}>
             <span>Short By</span>
             <Select value={order} onChange={handleOrder} size="small">

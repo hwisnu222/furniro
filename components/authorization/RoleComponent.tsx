@@ -7,7 +7,7 @@ import React from "react";
  * @returns
  */
 
-export default function AuthorComponent({
+export default function RoleComponent({
   role,
   children,
 }: {

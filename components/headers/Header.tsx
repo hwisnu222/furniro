@@ -46,6 +46,7 @@ import { convertCurrency } from "@/utils/currency";
 import { DELETE_CART } from "@/graphql/mutations/cart.mutation";
 import { getTotalPrice } from "@/utils/cart/getTotalCart";
 import { ROLE, STATUS_AUTH } from "@/constants";
+import RoleComponent from "../authorization/RoleComponent";
 
 const AuthComponent = ({ children }: { children: React.ReactNode }) => {
   const session = useSession();
@@ -192,7 +193,7 @@ export default function Header() {
                 </IconButton>
               )}
             </li>
-            <AuthComponent>
+            <RoleComponent role={[ROLE.Authenticated]}>
               <li>
                 <IconButton component={Link} href="/user/wishlist">
                   <FavoriteOutlined />
@@ -203,7 +204,7 @@ export default function Header() {
                   <ShoppingCartOutlined />
                 </IconButton>
               </li>
-            </AuthComponent>
+            </RoleComponent>
           </ul>
         ) : (
           <Stack gap={2} direction="row">
