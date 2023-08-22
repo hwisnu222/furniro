@@ -23,6 +23,7 @@ import {
   Modal,
   Typography,
   SelectChangeEvent,
+  Stack,
 } from "@mui/material";
 
 // images
@@ -32,8 +33,11 @@ import { TransactionItem } from "@/interfaces/transaction.interface";
 import { formatDate } from "@/utils/date";
 import { UPDATE_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
 import { enqueueSnackbar } from "notistack";
+import Image from "@/components/images/Image";
+import { CartItem } from "@/interfaces/cart.interface";
 
-const ModalDetail = () => {
+const ModalDetail = ({ transaction }: { transaction: TransactionItem }) => {
+  console.log({ transaction });
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -48,9 +52,66 @@ const ModalDetail = () => {
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        className="tw-p-4 md:tw-p-20"
       >
-        <Box className="tw-absolute tw-left-1/2 tw-right-1/2 tw-top-1/2 tw-inline-block tw-rounded-md tw-bg-white tw-p-4 md:tw-w-[400px]">
-          <Typography variant="h5">hello</Typography>
+        <Box className="tw-inline-block tw-h-full tw-w-full tw-overflow-x-auto tw-rounded-md tw-bg-white">
+          <Typography variant="h5" className=" tw-p-4">
+            Transaction Detail
+          </Typography>
+          <Divider />
+          <Box className="tw-grid tw-grid-cols-2 tw-p-4">
+            <Stack gap={2}>
+              {transaction.attributes.carts.data.map(
+                (cart: CartItem, index: number) => {
+                  const attributes = cart.attributes;
+                  return (
+                    <Box key={`cart-${index}`} className="tw-flex tw-gap-4">
+                      <Image
+                        src={
+                          attributes.product.data.attributes.image.data[0]
+                            .attributes.url
+                        }
+                        className="tw-h-24 tw-w-24 tw-object-cover"
+                        alt="cart-thumbnail"
+                      />
+                      <Box>
+                        <Typography className="tw-text-lg">
+                          {attributes.product.data.attributes.name}
+                        </Typography>
+                        <Typography className="tw-text-sm tw-text-gray-600">
+                          Total {attributes.total}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  );
+                },
+              )}
+            </Stack>
+            <Box>
+              <table>
+                <tbody>
+                  <tr>
+                    <td className="tw-pb-2 tw-pr-4">Status</td>
+                    <td>: {transaction.attributes.status}</td>
+                  </tr>
+                  <tr>
+                    <td className="tw-pb-2 tw-pr-4">Transaction create</td>
+                    <td>: {formatDate(transaction.attributes.createdAt)}</td>
+                  </tr>
+                  <tr>
+                    <td className="tw-pb-2 tw-pr-4">Buyer</td>
+                    <td>
+                      :{" "}
+                      {
+                        transaction.attributes.users_permissions_user.data
+                          ?.attributes.profile.data.attributes.firstname
+                      }
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </Box>
+          </Box>
         </Box>
       </Modal>
     </>
@@ -166,12 +227,12 @@ export default function List() {
                   <TableCell align="right" suppressHydrationWarning>
                     {formatDate(transaction.attributes.updatedAt)}
                   </TableCell>
-                  {/* <TableCell align="right">
-                    <IconButton>
-                        <Edit />
-                      </IconButton>
-                    <ModalDetail />
-                  </TableCell> */}
+                  <TableCell align="right">
+                    {/* <IconButton>
+                      <Edit />
+                    </IconButton> */}
+                    <ModalDetail transaction={transaction} />
+                  </TableCell>
                 </TableRow>
               ),
             )}

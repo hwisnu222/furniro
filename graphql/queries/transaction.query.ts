@@ -31,6 +31,21 @@ export const GET_TRANSACTIONS = gql`
               }
             }
           }
+          users_permissions_user {
+            data {
+              attributes {
+                profile {
+                  data {
+                    attributes {
+                      firstname
+                      lastname
+                      city
+                    }
+                  }
+                }
+              }
+            }
+          }
           createdAt
           updatedAt
         }
