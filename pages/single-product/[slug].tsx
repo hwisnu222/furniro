@@ -43,7 +43,7 @@ const DescriptionPanel = ({ description }: { description: string }) => {
   return (
     <Container>
       <div
-        className="tw-text-gray-400"
+        className="tw-text-center tw-text-gray-400"
         dangerouslySetInnerHTML={{ __html: description }}
       ></div>
     </Container>
@@ -131,7 +131,9 @@ const TabPannel = (key: string, product: ItemProduct) => {
   switch (key) {
     case "additional":
       return (
-        <p className="tw-text-gray-400">{product.attributes.additional}</p>
+        <p className="tw-text-center tw-text-gray-400">
+          {product.attributes.additional}
+        </p>
       );
     case "review":
       return <ReviewPanel idProduct={product.id} />;
@@ -362,7 +364,7 @@ export default function SingleProduct({
           />
         </Tabs>
       </Container>
-      <Container>{TabPannel(tab, product)}</Container>
+      <Container className="tw-mb-16">{TabPannel(tab, product)}</Container>
 
       <ProductLayout title="Related Products">
         <Products data={products} />
@@ -382,6 +384,9 @@ export async function getServerSideProps(ctx: any) {
   });
   const { data: dataProducts } = await client.query({
     query: GET_PRODUCTS,
+    variables: {
+      sort: "createdAt:desc",
+    },
   });
   const product = data?.products?.data[0];
   const products = dataProducts?.products?.data.slice(0, 8);

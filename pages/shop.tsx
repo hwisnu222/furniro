@@ -44,7 +44,7 @@ export default function Shop() {
     [params],
   );
 
-  const { data, refetch } = useQuery(GET_PRODUCTS, {
+  const { data, refetch, loading } = useQuery(GET_PRODUCTS, {
     fetchPolicy: "no-cache",
     variables: {
       filters: {
@@ -99,9 +99,9 @@ export default function Shop() {
         </Stack>
       </div>
       <Box className="tw-container tw-mx-auto tw-px-10">
-        {!products?.length && <NotList />}
+        {!products?.length && !loading && <NotList />}
 
-        {!!products?.length && <Products data={products} refetch={refetch} />}
+        <Products data={products} refetch={refetch} />
       </Box>
 
       <Benefite />
