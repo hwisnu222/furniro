@@ -111,7 +111,11 @@ export default function Blog({ blogs }: { blogs: ListBlogProps[] }) {
               className="tw-mb-8 tw-w-full"
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position="end" onClick={handleGetBlogs}>
+                  <InputAdornment
+                    position="end"
+                    onClick={handleGetBlogs}
+                    className="tw-cursor-pointer"
+                  >
                     <SearchOutlined />
                   </InputAdornment>
                 ),
