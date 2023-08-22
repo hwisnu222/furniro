@@ -61,7 +61,6 @@ export default function List({ blogs }: { blogs: ListBlogProps[] }) {
         <p className="tw-text-gray-400">Show from 1 to 20 result</p>
 
         <Box>
-          <Button className="tw-mr-4">Filter</Button>
           <TextField
             placeholder="Search"
             size="small"
