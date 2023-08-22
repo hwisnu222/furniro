@@ -4,19 +4,57 @@ import Link from "next/link";
 import { enqueueSnackbar } from "notistack";
 import { useSession } from "next-auth/react";
 
-import { useMutation } from "@apollo/client";
-import { Button, Avatar, Box } from "@mui/material";
-import { Compare, Details, FavoriteBorder, Reply } from "@mui/icons-material";
+import { useMutation, useQuery } from "@apollo/client";
+import { Button, Avatar, Box, IconButton } from "@mui/material";
+import {
+  Compare,
+  Details,
+  Favorite,
+  FavoriteBorder,
+  Reply,
+} from "@mui/icons-material";
 import { convertCurrency } from "@/utils/currency";
 
 import { ItemProduct, ProductProps } from "@/interfaces/product.interface";
 import { ADD_CART } from "@/graphql/mutations/cart.mutation";
-import { CREATE_WISHLIST } from "@/graphql/mutations/wishlist.mutation";
+import {
+  CREATE_WISHLIST,
+  DELETE_WISHLIST,
+} from "@/graphql/mutations/wishlist.mutation";
+import { GET_WISHLISTS } from "@/graphql/queries/wishlist.query";
+import { WishListItem } from "@/interfaces/wishlist.interface";
 
-export default function Products({ data }: ProductProps) {
+export default function Products(props: {
+  data: ItemProduct[];
+  refetch?: any;
+}) {
   const session = useSession();
+  const [wishlists, setWishlist] = React.useState([]);
+
   const [addCart] = useMutation(ADD_CART);
   const [addWishlist] = useMutation(CREATE_WISHLIST);
+  const [deleteWishlist] = useMutation(DELETE_WISHLIST);
+
+  const { refetch: refetchWishlist } = useQuery(GET_WISHLISTS, {
+    variables: {
+      filters: {
+        users_permissions_user: {
+          id: { eq: session.data?.user.id },
+        },
+      },
+    },
+    onCompleted: (data) => {
+      setWishlist(data.wishlists.data);
+      console.log(data.wishlists.data);
+    },
+  });
+
+  const checkWishlist = (id: number) => {
+    const listId = wishlists.filter(
+      (item: WishListItem) => item.attributes.product.data?.id === id,
+    );
+    return listId[0]?.id;
+  };
 
   const handleAddWishlist = (id: number) => {
     const idUser = session.data?.user.id;
@@ -28,12 +66,30 @@ export default function Products({ data }: ProductProps) {
         },
       },
       onCompleted: () => {
+        refetchWishlist();
+        props.refetch();
         enqueueSnackbar("Product has added to wishlist", {
           variant: "success",
         });
       },
       onError: () => {
         enqueueSnackbar("failed add product to wishlist", { variant: "error" });
+      },
+    });
+  };
+
+  const handleDeleteWishlist = (id: number) => {
+    deleteWishlist({
+      variables: {
+        id,
+      },
+      onCompleted: () => {
+        refetchWishlist();
+        props.refetch();
+        enqueueSnackbar("Wishlist is deleted!", { variant: "success" });
+      },
+      onError: () => {
+        enqueueSnackbar("failed delete wishlist!", { variant: "error" });
       },
     });
   };
@@ -57,7 +113,7 @@ export default function Products({ data }: ProductProps) {
   };
   return (
     <div className="tw-mb-8 tw-grid tw-grid-cols-1 tw-gap-4 md:tw-grid-cols-4">
-      {data?.map((item: ItemProduct, index: number) => (
+      {props.data?.map((item: ItemProduct, index: number) => (
         <Box
           key={`product-${index}`}
           className="tw-relative tw-gap-4 tw-rounded-md tw-bg-gray-200 tw-text-left"
@@ -74,11 +130,20 @@ export default function Products({ data }: ProductProps) {
               <li className="cursor-pointer tw-flex tw-items-center tw-gap-1 tw-text-sm">
                 <Reply className="tw-h-6 tw-w-6" /> Share
               </li>
-              <li
-                className="cursor-pointer tw-flex tw-cursor-pointer tw-items-center tw-gap-1 tw-text-sm"
-                onClick={() => handleAddWishlist(item.id)}
-              >
-                <FavoriteBorder className="tw-h-6 tw-w-6" /> <span>Like</span>
+              <li className="cursor-pointer tw-flex tw-cursor-pointer tw-items-center tw-gap-1 tw-text-sm">
+                {checkWishlist(item.id) ? (
+                  <IconButton
+                    onClick={() => handleDeleteWishlist(checkWishlist(item.id))}
+                  >
+                    <Favorite className="tw-h-6 tw-w-6 tw-text-red-400" />
+                  </IconButton>
+                ) : (
+                  <IconButton onClick={() => handleAddWishlist(item.id)}>
+                    <FavoriteBorder className="tw-h-6 tw-w-6 tw-text-white" />
+                  </IconButton>
+                )}
+
+                <span>Like</span>
               </li>
               <Link href={`/product-comparison?current=${index}&compare=5`}>
                 <li className="cursor-pointer tw-flex tw-items-center tw-gap-1 tw-text-sm">

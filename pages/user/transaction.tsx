@@ -15,6 +15,8 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Typography,
+  Stack,
 } from "@mui/material";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_TRANSACTIONS } from "@/graphql/queries/transaction.query";
@@ -23,9 +25,29 @@ import { TransactionItem } from "@/interfaces/transaction.interface";
 import { formatDate } from "@/utils/date";
 import NotList from "@/components/notFound/NotList";
 import { CartItem } from "@/interfaces/cart.interface";
-import { Delete, MoreVert } from "@mui/icons-material";
+import { Delete, Details, MoreVert } from "@mui/icons-material";
 import { enqueueSnackbar } from "notistack";
 import { DELETE_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
+import ModalTransaction from "@/components/modals/ModalTransaction";
+
+const StatusTypography = (props: {
+  children: React.ReactNode;
+  status: string;
+}) => {
+  return (
+    <Typography
+      className={
+        props.status === "pending"
+          ? "tw-text-orange-600"
+          : props.status === "finish"
+          ? "tw-text-green-600"
+          : "tw-text-gray-600"
+      }
+    >
+      {props.children}
+    </Typography>
+  );
+};
 
 export default function Transaction() {
   const session = useSession();
@@ -37,7 +59,7 @@ export default function Transaction() {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleCloseMenu = () => {
     setAnchorEl(null);
   };
 
@@ -54,7 +76,7 @@ export default function Transaction() {
   });
 
   const handleDelete = (id: number) => {
-    handleClose();
+    handleCloseMenu();
     deleteTransaction({
       variables: {
         id,
@@ -119,34 +141,52 @@ export default function Transaction() {
                         {`${dataTransaction.carts?.data.length} products`}
                       </TableCell>
                       <TableCell align="right">
-                        {dataTransaction.status}
+                        <StatusTypography status={dataTransaction.status}>
+                          {dataTransaction.status}
+                        </StatusTypography>
                       </TableCell>
                       <TableCell align="right" suppressHydrationWarning>
                         {formatDate(dataTransaction.createdAt)}
                       </TableCell>
                       <TableCell align="right">
-                        <IconButton>
+                        <Stack direction="row">
+                          <IconButton
+                            onClick={() => handleDelete(transaction.id)}
+                          >
+                            <Delete />
+                          </IconButton>
+                          <ModalTransaction transaction={transaction}>
+                            <IconButton>
+                              <Details />
+                            </IconButton>
+                          </ModalTransaction>
+                        </Stack>
+
+                        {/* <IconButton>
                           <IconButton onClick={handleClick}>
                             <MoreVert />
                           </IconButton>
+
                           <Menu
                             id="basic-menu"
                             anchorEl={anchorEl}
                             open={open}
-                            onClose={handleClose}
+                            onClose={handleCloseMenu}
                             MenuListProps={{
                               "aria-labelledby": "basic-button",
                             }}
                           >
-                            <MenuItem onClick={handleClose}>Detail</MenuItem>
+                            <ModalTransaction transaction={transaction}>
+                              <MenuItem>Detail</MenuItem>
+                            </ModalTransaction>
                             <MenuItem
                               className="tw-text-red-800"
-                              onClick={() => handleDelete(transaction.id)}
+                              
                             >
                               Hapus
                             </MenuItem>
                           </Menu>
-                        </IconButton>
+                        </IconButton> */}
                       </TableCell>
                     </TableRow>
                   );
