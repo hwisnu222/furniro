@@ -1,10 +1,10 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useLazyQuery } from "@apollo/client";
 
 import HeaderCard from "@/components/headers/HeaderCard";
 import DashboardLayout from "@/components/layouts/DashboardAdminLayout";
+import Image from "@/components/images/Image";
 
 import {
   TableContainer,
@@ -26,10 +26,10 @@ import { GET_PRODUCTS } from "@/graphql/queries/product.query";
 
 // images
 import { ItemProduct } from "@/interfaces/product.interface";
-import FornitureImg from "@/assets/images/furniture.png";
 import { formatDate } from "@/utils/date";
 import { Edit } from "@mui/icons-material";
 import { Meta } from "@/interfaces/meta.interface";
+import NotList from "@/components/notFound/NotList";
 
 export default function List({
   products,
@@ -44,10 +44,15 @@ export default function List({
   const [page, setPage] = React.useState(0);
   const [getProducts] = useLazyQuery(GET_PRODUCTS, {
     variables: {
-      filter: search,
+      filters: {
+        name: {
+          containsi: search,
+        },
+      },
     },
     onCompleted: (data) => {
       const dataProduct = data.products;
+      console.log(dataProduct);
       setProductList(dataProduct);
     },
   });
@@ -63,7 +68,7 @@ export default function List({
   ) => {
     setPage(value);
   };
-  console.log(productList);
+
   return (
     <DashboardLayout>
       <HeaderCard
@@ -110,7 +115,7 @@ export default function List({
               >
                 <TableCell component="th" scope="row" className="tw-w-[200px]">
                   <Image
-                    src={FornitureImg}
+                    src={product.attributes.image.data[0].attributes.url}
                     alt="thumbnail-product"
                     fill={false}
                     className="tw-h-36 tw-w-36 tw-object-cover"
@@ -138,6 +143,11 @@ export default function List({
           </TableBody>
         </Table>
       </TableContainer>
+      {!productList.data.length && (
+        <Box className="tw-text-center">
+          <NotList />
+        </Box>
+      )}
       <Divider />
       <Box className="tw-flex tw-justify-end tw-py-4">
         <Pagination
