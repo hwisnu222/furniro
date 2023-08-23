@@ -52,7 +52,7 @@ export default function Products(props: {
     const listId = wishlists.filter(
       (item: WishListItem) => item.attributes.product.data?.id === id,
     );
-    return listId[0]?.id;
+    return listId[0]?.["id"];
   };
 
   const handleAddWishlist = (id: number) => {
