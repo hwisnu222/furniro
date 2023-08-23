@@ -56,7 +56,6 @@ export default function Checkout() {
     },
   });
 
-  console.log(dataProfile);
   const profile = dataProfile?.profiles?.data[0];
 
   const [createTransaction] = useMutation(ADD_TRANSACTION);
@@ -74,7 +73,6 @@ export default function Checkout() {
     },
     onCompleted: (cartData) => {},
   });
-  console.log({ dataCarts });
 
   const updateTransactionToCart = async (transaction: number) => {
     const idCarts = dataCarts?.carts.data.map((cart: CartItem) => cart.id);
@@ -92,7 +90,6 @@ export default function Checkout() {
         }),
       );
 
-      console.log(updateAllCarts);
       refetch();
       enqueueSnackbar("Transaction has created!", { variant: "success" });
       return;

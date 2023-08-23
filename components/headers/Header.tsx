@@ -131,7 +131,7 @@ export default function Header() {
       },
     });
   };
-  console.log(session.data?.user.role);
+
   const pathAccounst =
     session.data?.user.role === ROLE.Admin
       ? "/admin/product/list"

@@ -153,7 +153,6 @@ export default function CreatePostProduct({
     },
     onCompleted: (data) => {
       const form = data.products.data[0].attributes;
-      console.log(form.category.data.attributes.category);
       dispatch({
         type: Type.MULTIPLE,
         payload: {

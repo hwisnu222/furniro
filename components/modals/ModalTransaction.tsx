@@ -20,7 +20,6 @@ export default function ModalTransaction({
   transaction: TransactionItem;
   children?: React.ReactNode;
 }) {
-  console.log({ transaction });
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
