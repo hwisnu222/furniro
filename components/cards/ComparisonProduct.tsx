@@ -32,7 +32,7 @@ export default function ComparisonProduct({
         <p className="tw-font-bold">{convertCurrency(price)}</p>
         <div className="tw-flex tw-items-center tw-gap-2">
           <span>{rating}</span>
-          <Rating value={rating as number} size="small" />
+          <Rating value={rating as number} size="small" readOnly />
           <span className="tw-text-sm tw-text-gray-400">{review} reviews</span>
         </div>
       </Box>

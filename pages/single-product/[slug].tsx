@@ -242,7 +242,7 @@ export default function SingleProduct({
             {convertCurrency(product?.attributes.price)}
           </p>
           <Stack direction="row" alignItems="center">
-            <Rating value={product.attributes.rating} />
+            <Rating value={product.attributes.rating} readOnly />
             <Divider orientation="vertical" className="tw-mx-2 tw-my-6" />
             <span className="tw-text-sm tw-text-gray-300">
               5 Customer Review

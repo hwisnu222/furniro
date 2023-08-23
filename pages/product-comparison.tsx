@@ -54,7 +54,9 @@ export default function ProductComparison() {
   });
   const products = dataProducts?.products.data;
 
-  const [getProduct, { data: dataCompare }] = useLazyQuery(GET_PRODUCT);
+  const [getProduct, { data: dataCompare }] = useLazyQuery(GET_PRODUCT, {
+    fetchPolicy: "no-cache",
+  });
   const productCompare = dataCompare?.products.data[0];
 
   const handleSelectProduct = (event: SelectChangeEvent) => {
@@ -140,7 +142,7 @@ export default function ProductComparison() {
         {/* <TableComparison title="General" data={general} /> */}
         <Box className="tw-pt-8">
           <h3 className="tw-mb-4 tw-text-lg tw-font-semibold">General</h3>
-          <table className="md:tw-w-5/6">
+          <table className="tw-overflow-x-auto md:tw-w-5/6">
             <tbody>
               <tr>
                 <td className="tw-py-2">Name</td>
@@ -167,13 +169,24 @@ export default function ProductComparison() {
               <tr>
                 <td className="tw-py-2">Rating</td>
                 <td className="tw-py-2">
-                  <Rating value={product?.attributes.rating} size="small" />
+                  <Box className="tw-flex tw-items-center tw-gap-2">
+                    <span>{product?.attributes.rating}</span>
+                    <Rating
+                      value={product?.attributes.rating}
+                      size="small"
+                      readOnly
+                    />
+                  </Box>
                 </td>
                 <td className="tw-py-2">
-                  <Rating
-                    value={productCompare?.attributes.rating}
-                    size="small"
-                  />
+                  <Box className="tw-flex tw-items-center tw-gap-2">
+                    <span>{productCompare?.attributes.rating}</span>
+                    <Rating
+                      value={productCompare?.attributes.rating}
+                      size="small"
+                      readOnly
+                    />
+                  </Box>
                 </td>
               </tr>
               <tr>

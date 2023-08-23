@@ -144,7 +144,9 @@ export default function Products(props: {
 
                 <span>Like</span>
               </li>
-              <Link href={`/product-comparison?current=${index}&compare=5`}>
+              <Link
+                href={`/product-comparison?current=${item.attributes.slug}`}
+              >
                 <li className="cursor-pointer tw-flex tw-items-center tw-gap-1 tw-text-sm">
                   <Compare className="tw-h-6 tw-w-6" />
                   Compare

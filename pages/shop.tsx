@@ -56,7 +56,7 @@ export default function Shop() {
       sort: `price:${order}`,
     },
   });
-  const products = React.useMemo(() => data?.products?.data, [data]);
+  const products = data?.products?.data;
 
   const handleOnApply = (data: any) => {
     setFilter(data);
@@ -79,8 +79,8 @@ export default function Shop() {
           <Filter onApply={handleOnApply} />
 
           <span>
-            Showing {products?.length} of {data?.products.meta.pagination.total}{" "}
-            results
+            Showing {data?.products?.data?.length} of{" "}
+            {data?.products.meta.pagination.total} results
           </span>
         </Stack>
 
@@ -99,9 +99,9 @@ export default function Shop() {
         </Stack>
       </div>
       <Box className="tw-container tw-mx-auto tw-px-10">
-        {!products?.length && !loading && <NotList />}
+        {!data?.products?.data?.length && !loading && <NotList />}
 
-        <Products data={products} refetch={refetch} />
+        <Products data={data?.products?.data} refetch={refetch} />
       </Box>
 
       <Benefite />
