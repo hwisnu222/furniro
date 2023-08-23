@@ -1,7 +1,8 @@
 import React from "react";
-import Image, { StaticImageData } from "next/image";
-import { Rating } from "@mui/material";
+import { StaticImageData } from "next/image";
+import { Rating, Box } from "@mui/material";
 import { convertCurrency } from "@/utils/currency";
+import Image from "../images/Image";
 
 interface ProductComparisonProps {
   image: StaticImageData | string;
@@ -24,15 +25,17 @@ export default function ComparisonProduct({
         src={image}
         alt="thumbnail-compare"
         fill={false}
-        className="tw-h-32 tw-w-full"
+        className="tw-h-32 tw-w-full tw-object-cover"
       />
-      <h3 className="tw-text-lg tw-font-bold">{name}</h3>
-      <p className="tw-font-bold">{convertCurrency(price)}</p>
-      <div className="tw-flex tw-items-center tw-gap-2">
-        <span>{rating}</span>
-        <Rating value={rating as number} size="small" />
-        <span className="tw-text-sm tw-text-gray-400">{review} reviews</span>
-      </div>
+      <Box className="tw-p-2">
+        <h3 className="tw-text-lg tw-font-bold">{name}</h3>
+        <p className="tw-font-bold">{convertCurrency(price)}</p>
+        <div className="tw-flex tw-items-center tw-gap-2">
+          <span>{rating}</span>
+          <Rating value={rating as number} size="small" />
+          <span className="tw-text-sm tw-text-gray-400">{review} reviews</span>
+        </div>
+      </Box>
     </section>
   );
 }

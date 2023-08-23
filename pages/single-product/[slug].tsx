@@ -308,7 +308,13 @@ export default function SingleProduct({
             >
               Add to Cart
             </Button>
-            <Button variant="outlined">Compare</Button>
+            <Button
+              variant="outlined"
+              component={Link}
+              href={`/product-comparison?current=${product.attributes.slug}`}
+            >
+              Compare
+            </Button>
           </div>
 
           <Divider className="tw-my-6" />
