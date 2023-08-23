@@ -22,6 +22,9 @@ export default function DashboardLayout({
       case "transaction":
         router.push("/admin/transaction/list");
         break;
+      case "contact":
+        router.push("/admin/contact/list");
+        break;
 
       default:
         router.push("/admin/product/list");
@@ -36,6 +39,7 @@ export default function DashboardLayout({
         <Tab label="Product" value="product" />
         <Tab label="Blog" value="blog" />
         <Tab label="Transaction" value="transaction" />
+        <Tab label="Contact" value="contact" />
       </Tabs>
       <Container className="tw-py-4">
         <Card className="tw-p-4">{children}</Card>

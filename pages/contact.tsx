@@ -7,8 +7,49 @@ import HeaderProduct from "@/components/headers/HeaderProduct";
 import Container from "@/components/layouts/Container";
 import { Button, TextField } from "@mui/material";
 import { AccessTime, LocalPhone, LocationOn } from "@mui/icons-material";
+import { useMutation } from "@apollo/client";
+import { CREATE_CONTACT } from "@/graphql/mutations/contact.mutation";
+import { enqueueSnackbar } from "notistack";
 
-export default function contact() {
+const initialState = {
+  name: "",
+  email: "",
+  subject: "",
+  message: "",
+};
+
+export default function Contact() {
+  const [addContact] = useMutation(CREATE_CONTACT);
+  const [form, setForm] = React.useState(initialState);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const target = event.target;
+    setForm({
+      ...form,
+      [target.name]: target.value,
+    });
+  };
+
+  const handleAddContact = () => {
+    if (!Object.values(form).every((input) => Boolean(input))) {
+      enqueueSnackbar("Please fill all input!", { variant: "error" });
+      return;
+    }
+    addContact({
+      variables: {
+        data: form,
+      },
+      onCompleted: () => {
+        setForm(initialState);
+        enqueueSnackbar("Your message has sended to admin!", {
+          variant: "success",
+        });
+      },
+      onError: () => {
+        enqueueSnackbar("Failed send message!", { variant: "error" });
+      },
+    });
+  };
   return (
     <>
       <Header />
@@ -54,17 +95,39 @@ export default function contact() {
             </div>
           </div>
           <div className="tw-flex tw-w-full tw-flex-col tw-items-start tw-justify-start tw-gap-4 md:tw-w-1/2">
-            <TextField label="Your Name" className="tw-w-full" />
-            <TextField label="Email Address" className="tw-w-full" />
-            <TextField label="Subject" className="tw-w-full" />
+            <TextField
+              label="Your Name"
+              className="tw-w-full"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Email Address"
+              className="tw-w-full"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Subject"
+              className="tw-w-full"
+              name="subject"
+              value={form.subject}
+              onChange={handleChange}
+            />
             <TextField
               label="Message"
               multiline={true}
               className="tw-mb-8 tw-w-full"
+              name="message"
+              value={form.message}
+              onChange={handleChange}
             />
             <Button
               variant="contained"
               className="tw-inline-block tw-bg-default-200"
+              onClick={handleAddContact}
             >
               Submit
             </Button>
