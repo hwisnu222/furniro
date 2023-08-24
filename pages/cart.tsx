@@ -29,8 +29,10 @@ import { useMutation, useQuery } from "@apollo/client";
 import { GET_CARTS } from "@/graphql/queries/cart.query";
 import { DELETE_CART } from "@/graphql/mutations/cart.mutation";
 import { getTotalPrice } from "@/utils/cart/getTotalCart";
+import { useSession } from "next-auth/react";
 
 export default function Cart() {
+  const session = useSession();
   const [deleteCart] = useMutation(DELETE_CART, {
     onCompleted: () => {
       enqueueSnackbar("Cart is delete", { variant: "success" });
@@ -43,6 +45,20 @@ export default function Cart() {
 
   const { data, refetch } = useQuery(GET_CARTS, {
     fetchPolicy: "cache-and-network",
+    variables: {
+      filters: {
+        users_permissions_user: {
+          id: {
+            eq: session.data?.user.id,
+          },
+        },
+        transaction: {
+          id: {
+            eq: null,
+          },
+        },
+      },
+    },
   });
   const carts = data?.carts.data;
 
@@ -67,7 +83,7 @@ export default function Cart() {
                   <TableCell>Product</TableCell>
                   <TableCell align="right">Price</TableCell>
                   <TableCell align="right">Quantity</TableCell>
-                  <TableCell align="right">Subtotal</TableCell>
+                  {/* <TableCell align="right">Subtotal</TableCell> */}
                   <TableCell align="right"></TableCell>
                 </TableRow>
               </TableHead>
@@ -103,7 +119,7 @@ export default function Cart() {
                         {cart.attributes.total}
                       </p>
                     </TableCell>
-                    <TableCell align="right">4</TableCell>
+                    {/* <TableCell align="right">4</TableCell> */}
                     <TableCell align="right">
                       <IconButton onClick={() => handleDeleteCart(cart.id)}>
                         <Delete className="tw-text-default-200" />
