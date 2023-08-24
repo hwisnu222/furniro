@@ -15,7 +15,7 @@ import {
 } from "@mui/icons-material";
 import { convertCurrency } from "@/utils/currency";
 
-import { ItemProduct, ProductProps } from "@/interfaces/product.interface";
+import { ItemProduct } from "@/interfaces/product.interface";
 import { ADD_CART } from "@/graphql/mutations/cart.mutation";
 import {
   CREATE_WISHLIST,
@@ -23,7 +23,6 @@ import {
 } from "@/graphql/mutations/wishlist.mutation";
 import { GET_WISHLISTS } from "@/graphql/queries/wishlist.query";
 import { WishListItem } from "@/interfaces/wishlist.interface";
-import { GET_PRODUCT } from "@/graphql/queries/product.query";
 import { GET_CARTS } from "@/graphql/queries/cart.query";
 
 const ProductCard = ({
@@ -224,6 +223,7 @@ const ProductCard = ({
           </s>
           <strong className="tw-inline tw-text-default-200">
             {convertCurrency(
+              item?.attributes.price -
               (item?.attributes.disscount / 100) * item?.attributes.price,
             )}
           </strong>
