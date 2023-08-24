@@ -119,6 +119,7 @@ export default function Contact() {
             <TextField
               label="Message"
               multiline={true}
+              minRows={10}
               className="tw-mb-8 tw-w-full"
               name="message"
               value={form.message}
