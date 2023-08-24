@@ -91,11 +91,12 @@ export default function Header() {
         },
       },
     },
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "no-cache",
   });
   const carts = data?.carts.data;
 
   const handleDrawer = () => {
+    refetch();
     setDrawer((prev: boolean) => !prev);
   };
 
@@ -231,7 +232,7 @@ export default function Header() {
 
       {/* drawer */}
       <Drawer anchor="right" open={drawer} onClose={handleDrawer}>
-        <div className="tw-items-between tw-flex tw-h-full tw-flex-col tw-p-4">
+        <div className="tw-items-between tw-flex tw-h-full tw-w-[400px] tw-flex-col tw-p-4">
           <div>
             <div className="tw-flex tw-items-center tw-justify-between tw-px-2 tw-py-4">
               <h3 className="tw-text-xl tw-font-bold">Shooping Cart</h3>
@@ -249,7 +250,7 @@ export default function Header() {
                   fill={false}
                   className="tw-h-20 tw-w-20 tw-rounded-md"
                 />
-                <div className="tw-flex tw-items-center tw-justify-between tw-gap-2">
+                <div className="tw-flex tw-w-full tw-items-center tw-justify-between tw-gap-2">
                   <div>
                     <h3>{cart.attributes.product?.data?.attributes.name}</h3>
                     <p className="tw-text-xs">
@@ -279,7 +280,7 @@ export default function Header() {
                 {convertCurrency(getTotalPrice(carts))}
               </p>
             </div>
-            <Stack direction="row" justifyContent="space-between" gap={2}>
+            <Stack direction="row" gap={2}>
               <Button
                 component={Link}
                 href="/cart"
@@ -299,7 +300,7 @@ export default function Header() {
               >
                 Checkout
               </Button>
-              <Button
+              {/* <Button
                 component={Link}
                 href="/comparition"
                 variant="outlined"
@@ -307,7 +308,7 @@ export default function Header() {
                 className="tw-rounded-full"
               >
                 Comparition
-              </Button>
+              </Button> */}
             </Stack>
           </div>
         </div>
