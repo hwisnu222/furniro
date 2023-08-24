@@ -56,7 +56,6 @@ export default function Shop() {
       sort: `price:${order}`,
     },
   });
-  const products = data?.products?.data;
 
   const handleOnApply = (data: any) => {
     setFilter(data);

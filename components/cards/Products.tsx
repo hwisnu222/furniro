@@ -4,7 +4,7 @@ import Link from "next/link";
 import { enqueueSnackbar } from "notistack";
 import { useSession } from "next-auth/react";
 
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { Button, Avatar, Box, IconButton } from "@mui/material";
 import {
   Compare,
@@ -23,6 +23,8 @@ import {
 } from "@/graphql/mutations/wishlist.mutation";
 import { GET_WISHLISTS } from "@/graphql/queries/wishlist.query";
 import { WishListItem } from "@/interfaces/wishlist.interface";
+import { GET_PRODUCT } from "@/graphql/queries/product.query";
+import { GET_CARTS } from "@/graphql/queries/cart.query";
 
 const ProductCard = ({
   item,
@@ -39,6 +41,7 @@ const ProductCard = ({
   const [addWishlist] = useMutation(CREATE_WISHLIST);
   const [deleteWishlist] = useMutation(DELETE_WISHLIST);
 
+  const [getCarts] = useLazyQuery(GET_CARTS);
   const { refetch: refetchWishlist } = useQuery(GET_WISHLISTS, {
     variables: {
       filters: {
@@ -104,7 +107,33 @@ const ProductCard = ({
     });
   };
 
-  const handleAddCart = () => {
+  const handleAddCart = async () => {
+    // check product on carts
+    const { data: dataCarts } = await getCarts({
+      fetchPolicy: "network-only",
+      variables: {
+        filters: {
+          product: {
+            id: {
+              eq: item.id,
+            },
+          },
+          users_permissions_user: {
+            id: {
+              eq: session.data?.user.id,
+            },
+          },
+        },
+      },
+    });
+
+    if (dataCarts.carts.data.length) {
+      enqueueSnackbar("This product has in your cart!", {
+        variant: "success",
+      });
+      return;
+    }
+
     addCart({
       variables: {
         data: {
