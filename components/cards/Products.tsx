@@ -57,7 +57,6 @@ const ProductCard = ({
       const listId = wishlists.filter(
         (item: WishListItem) => item.attributes.product.data?.id === id,
       );
-      console.log(listId);
       return listId[0]?.["id"];
     },
     [wishlists],
