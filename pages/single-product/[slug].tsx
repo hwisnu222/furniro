@@ -239,13 +239,17 @@ export default function SingleProduct({
             </RoleComponent>
           </Stack>
           <p className="tw-text-xl tw-font-semibold tw-text-gray-300">
-            {convertCurrency(product?.attributes.price)}
+            {convertCurrency(
+              product?.attributes.price -
+                (product?.attributes.disscount / 100) *
+                  product?.attributes.price,
+            )}
           </p>
           <Stack direction="row" alignItems="center">
             <Rating value={product.attributes.rating} readOnly />
             <Divider orientation="vertical" className="tw-mx-2 tw-my-6" />
             <span className="tw-text-sm tw-text-gray-300">
-              5 Customer Review
+              {product.attributes.reviews?.data.length} Customer Review
             </span>
           </Stack>
           <p className="tw-mb-8">{product?.attributes.summary}</p>
