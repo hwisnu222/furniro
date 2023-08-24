@@ -1,6 +1,8 @@
 import React from "react";
-import Image from "next/image";
 import { enqueueSnackbar } from "notistack";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useMutation, useQuery } from "@apollo/client";
 
 import {
   Box,
@@ -20,16 +22,14 @@ import Header from "@/components/headers/Header";
 import HeaderProduct from "@/components/headers/HeaderProduct";
 import Benefite from "@/components/footers/Benefite";
 import Container from "@/components/layouts/Container";
+import Image from "@/components/images/Image";
 
-import FurnitureImg from "@/assets/images/furniture.png";
-
-import { convertCurrency } from "@/utils/currency";
 import { CartItem } from "@/interfaces/cart.interface";
-import { useMutation, useQuery } from "@apollo/client";
-import { GET_CARTS } from "@/graphql/queries/cart.query";
 import { DELETE_CART } from "@/graphql/mutations/cart.mutation";
+import { GET_CARTS } from "@/graphql/queries/cart.query";
+
 import { getTotalPrice } from "@/utils/cart/getTotalCart";
-import { useSession } from "next-auth/react";
+import { convertCurrency } from "@/utils/currency";
 
 export default function Cart() {
   const session = useSession();
@@ -95,7 +95,10 @@ export default function Cart() {
                   >
                     <TableCell align="right" className="tw-text-gray-400">
                       <Image
-                        src={FurnitureImg}
+                        src={
+                          cart.attributes.product.data.attributes.image.data[0]
+                            .attributes.url
+                        }
                         alt="thumbnail-cart"
                         fill={false}
                         className="tw-h-24 tw-w-24 tw-rounded-md"
@@ -134,10 +137,10 @@ export default function Cart() {
         <div className="tw-rounded-sm tw-bg-default-100 tw-px-12 tw-py-4">
           <h3 className="tw-mb-4 tw-text-center tw-text-2xl">Cart Totals</h3>
           <Box className="tw-mb-8">
-            <div className="tw-mb-2 tw-grid tw-grid-cols-2">
+            {/* <div className="tw-mb-2 tw-grid tw-grid-cols-2">
               <span>Subtotal</span>
               <span className="tw-whitespace-nowrap">Rp 25.000.000</span>
-            </div>
+            </div> */}
             <div className="tw-grid tw-grid-cols-2">
               <span>Total</span>
               <span className="tw-whitespace-nowrap">
@@ -145,7 +148,12 @@ export default function Cart() {
               </span>
             </div>
           </Box>
-          <Button variant="outlined" className="tw-w-full">
+          <Button
+            variant="outlined"
+            className="tw-w-full"
+            component={Link}
+            href="/checkout"
+          >
             Check out
           </Button>
         </div>
