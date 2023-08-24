@@ -355,7 +355,7 @@ export default function Header() {
               Account
             </h3>
 
-            <ListItemButton component={Link} href="/user/transaction">
+            <ListItemButton component={Link} href={pathAccounst}>
               <ListItemIcon>
                 <Person />
               </ListItemIcon>
